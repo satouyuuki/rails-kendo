@@ -11,9 +11,8 @@
       <div class="match-table__list">
         <div class="match-table__list--cell">佐藤</div>
         <div class="match-table__list--cell2" v-on:click="toggleShow">
-          <!-- <%= image_tag 'men.svg', class: 'match-table__icon' %>
-          <%= image_tag 'men.svg', class: 'match-table__icon' %> -->
-          <img src="" alt="">
+          <img :src="men" alt="">
+
         </div>
         <div class="match-table__list--cell2"></div>
         <div class="match-table__list--cell">田中</div>
@@ -50,6 +49,7 @@
   </div>
 </template>
 <script>
+import men from '../../assets/images/men.svg'
 import modal from './modal.vue';
 export default {
   components: {
@@ -60,6 +60,7 @@ export default {
     return {
       member: 5,
       isShow: false,
+      men: men
     }
   },
   methods: {
