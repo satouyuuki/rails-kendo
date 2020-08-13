@@ -7,6 +7,9 @@
     <h1>試合表</h1>
     <span>2020/8/6(水)</span>
     <button type="button" class="print" onclick="window.print();">印刷</button>
+    <div v-for="team in teams" :key="team.id">
+      {{team.name}}
+    </div>
     <div class="match-table">
       <div class="match-table__list">
         <div class="match-table__list--cell">佐藤</div>
@@ -60,13 +63,23 @@ export default {
     return {
       member: 5,
       isShow: false,
-      men: men
+      men: men,
+      teams: [],
     }
   },
   methods: {
     toggleShow() {
       this.isShow = !this.isShow;
     }
+  },
+  mounted() {
+    fetch('api/teams')
+    .then(res => {
+      return res.json();
+    })
+    .then(res => {
+      this.teams = res;
+    })
   }
 }
 </script>
