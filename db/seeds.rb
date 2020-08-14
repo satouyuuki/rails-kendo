@@ -5,6 +5,10 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-3.times do |i|
+6.times do |i|
   Team.create(name: "名無し#{i+1}")
+end
+6.times do |i|
+  School.create(name: "サンプル#{i+1}高校")
+  Opponent.create(school_id: School.find(1).id, name: "相手の名前#{i+1}")
 end

@@ -1,5 +1,5 @@
 <template>
-  <div class="mask" v-if="isShow" v-on:click.self="onToggleShow">
+  <div class="mask" v-if="isHanteiModalShow" v-on:click.self="onToggleShow">
     <div class="m-card">
       <button type="button" class="m-card__close-btn" v-on:click="onToggleShow">閉じる</button>
       <h2>試合表を変更</h2>
@@ -16,9 +16,9 @@ import men from '../../assets/images/men.svg'
 import kote from '../../assets/images/kote.svg'
 import dou from '../../assets/images/dou.svg'
 export default {
-  name: "modal",
+  name: "hanteiModal",
   props: [
-    'isShow'
+    'isHanteiModalShow'
   ],
   data: () => {
     return {
@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     onToggleShow() {
-      this.$emit('toggleShow');
+      this.$emit('toggleHanteiShow');
     },
     onTest(index) {
       this.$emit('selectImg', index);

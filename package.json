@@ -6,7 +6,8 @@
     "vue": "^2.6.11",
     "vue-loader": "^15.9.3",
     "vue-router": "^3.4.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "vuedraggable": "^2.24.0"
   },
   "devDependencies": {
     "webpack-dev-server": "^3.11.0"
