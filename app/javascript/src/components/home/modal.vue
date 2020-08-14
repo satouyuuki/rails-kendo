@@ -4,22 +4,37 @@
       <button type="button" class="m-card__close-btn" v-on:click="onToggleShow">閉じる</button>
       <h2>試合表を変更</h2>
       <div class="m-card__list">
-        <!-- <img src="/app/javascript/src/assets/images/men.svg" alt="">
-        <img src="/app/javascript/src/assets/images/sankaku.svg" alt="">
-        <img src="/app/javascript/src/assets/images/ippon.svg" alt=""> -->
+        <div v-for="(item, index) in items" :key="index">
+          <img :src="item.name" @click="onTest(index)">
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import men from '../../assets/images/men.svg'
+import kote from '../../assets/images/kote.svg'
+import dou from '../../assets/images/dou.svg'
 export default {
   name: "modal",
   props: [
     'isShow'
   ],
+  data: () => {
+    return {
+      items: [
+        {name: men},
+        {name: kote},
+        {name: dou},
+      ],
+    }
+  },
   methods: {
     onToggleShow() {
       this.$emit('toggleShow');
+    },
+    onTest(index) {
+      this.$emit('selectImg', index);
     }
   }
 }
