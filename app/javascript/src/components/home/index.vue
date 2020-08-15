@@ -10,13 +10,16 @@
       @toggleMemberShow="toggleMemberShow"
       @decisionMember="decisionMember"
     />
+    <opponentModal 
+      :isOpponentModalShow="isOpponentModalShow"
+      @toggleOpponentShow="toggleOpponentShow"
+      @decisionOpponent="decisionOpponent"
+    />
     <h1>試合表</h1>
     <span>2020/8/6(水)</span>
     <button type="button" class="print" onclick="window.print();">印刷</button>
     <button type="button" class="member" v-on:click="toggleMemberShow">メンバー編成</button>
-    <!-- <div v-for="team in teams" :key="team.id">
-      {{team.name}}
-    </div> -->
+    <button type="button" class="member" v-on:click="toggleOpponentShow">相手チーム</button>
     <div class="match-table">
       <!-- 自分のチーム -->
       <div class="match-table__list">
@@ -41,15 +44,17 @@
       </div>
       <!-- 相手のチーム -->
       <div class="match-table__list">
-        <div class="match-table__list--cell">武藤</div>
-        <div class="match-table__list--cell">武藤</div>
-        <div class="match-table__list--cell">鈴木</div>
-        <div class="match-table__list--cell">鈴木</div>
-        <div class="match-table__list--cell">武藤</div>
+        <div 
+          class="match-table__list--cell"
+          v-for="member in oppMembers"
+          :key="member.id"
+        >
+          {{member.name}}
+        </div>
       </div>
       <div class="match-table__list">
         <div class="match-table__list--cell">○○高校</div>
-        <div class="match-table__list--cell">△△高校</div>
+        <div class="match-table__list--cell">{{schoolName}}</div>
       </div>
     </div>
   </div>
@@ -60,6 +65,7 @@ import kote from '../../assets/images/kote.svg'
 import dou from '../../assets/images/dou.svg'
 import hanteiModal from './hanteiModal.vue';
 import memberModal from './memberModal.vue';
+import opponentModal from './opponentModal.vue';
 const images = {
   0: men,
   1: kote,
@@ -69,13 +75,14 @@ export default {
   components: {
     hanteiModal,
     memberModal,
+    opponentModal,
   },
   name: "index",
   data: () => {
     return {
-      member: 5,
       isHanteiModalShow: false,
       isMemberModalShow: false,
+      isOpponentModalShow: false,
       items: [],
       regMembers: [
         {id: 1, name: ""},
@@ -84,17 +91,17 @@ export default {
         {id: 4, name: ""},
         {id: 5, name: ""},
       ],
-      members: [],
-      position: "",
-      waza: "",
-      istotta: "",
-      content: ""
+      oppMembers: [
+        {id: 1, name: ""},
+        {id: 2, name: ""},
+        {id: 3, name: ""},
+        {id: 4, name: ""},
+        {id: 5, name: ""},
+      ],
+      schoolName: "△△高校",
     }
   },
   computed: {
-    test() {
-      return this.$refs.hogehoge;
-    }
   },
   methods: {
     toggleHanteiShow() {
@@ -103,25 +110,21 @@ export default {
     toggleMemberShow() {
       this.isMemberModalShow = !this.isMemberModalShow;
     },
+    toggleOpponentShow() {
+      this.isOpponentModalShow = !this.isOpponentModalShow;
+    },
     selectImg(index) {
       this.items.push(images[index]);
     },
     decisionMember(members) {
-      console.log(members);
       this.regMembers = members;
     },
-    onIppon() {
-
-    }
+    decisionOpponent(members) {
+      if(members[0]) this.oppMembers = members[0];
+      if(members[1]) this.schoolName = members[1];
+    },
   },
   mounted() {
-    // fetch('api/teams')
-    // .then(res => {
-    //   return res.json();
-    // })
-    // .then(res => {
-    //   this.regMembers = res;
-    // })
   }
 }
 </script>

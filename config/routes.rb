@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "api/opponents" => "opponents#index"
+  get "api/opponents/:id" => "opponents#show"
   get "api/schools" => "schools#index"
   get "api/teams" => "teams#index"
   root to: "home#index"
