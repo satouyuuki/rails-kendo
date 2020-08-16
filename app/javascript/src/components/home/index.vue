@@ -1,5 +1,6 @@
 <template>
   <div>
+    <router-link to="/list">一覧ページ</router-link>
     <hanteiModal 
       :isHanteiModalShow="isHanteiModalShow"
       @toggleHanteiShow="toggleHanteiShow"
@@ -22,56 +23,38 @@
     <button type="button" class="member" v-on:click="toggleOpponentShow">相手チーム</button>
     <div class="match-table">
       <!-- 自分のチーム -->
-      <div class="match-table__list">
-        <div 
-          class="match-table__list--cell"
-          v-for="member in regMembers"
-          :key="member.id"
-        >
-          {{member.name}}
-        </div>
-      </div>
+      <teams 
+        :members="regMembers"
+      />
       <!-- 試合表 -->
       <masu 
         :cells="cells"
         @toggleHanteiShow="toggleHanteiShow"
       />
       <!-- 相手のチーム -->
+      <teams 
+        :members="oppMembers"
+      />
       <div class="match-table__list">
-        <div 
-          class="match-table__list--cell"
-          v-for="member in oppMembers"
-          :key="member.id"
-        >
-          {{member.name}}
-        </div>
-      </div>
-      <div class="match-table__list">
-        <div class="match-table__list--cell">○○高校</div>
+        <div class="match-table__list--cell">自分の高校</div>
         <div class="match-table__list--cell">{{schoolName}}</div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import men from '../../assets/images/men.svg'
-import kote from '../../assets/images/kote.svg'
-import dou from '../../assets/images/dou.svg'
 import hanteiModal from './hanteiModal.vue';
 import memberModal from './memberModal.vue';
 import opponentModal from './opponentModal.vue';
 import masu from './masu.vue';
-const images = {
-  0: men,
-  1: kote,
-  2: dou,
-};
+import teams from './teams.vue';
 export default {
   components: {
     hanteiModal,
     memberModal,
     opponentModal,
     masu,
+    teams,
   },
   name: "index",
   data: () => {
@@ -111,10 +94,18 @@ export default {
     }
   },
   computed: {
+    customCells() {
+      // this.cells
+      //   .filter(cell => cell.id % 2 === 0)
+      //   .map((map, index) => {
+      //     console.log('oppid = '+this.oppMembers[index].id);
+      //     console.log('mapid = '+map.id);
+      //     map.id = this.oppMembers[index].id;
+      //   });
+    }
   },
   methods: {
     toggleHanteiShow(id) {
-      console.log(id);
       this.masuId = id;
       this.isHanteiModalShow = !this.isHanteiModalShow;
     },
@@ -128,7 +119,7 @@ export default {
       const cell = this.cells
         .filter(cell => cell.id === this.masuId)
         .map(map => {
-          map.items.push(images[index]);
+          map.items.push(index);
         });
     },
     decisionMember(members) {

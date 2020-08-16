@@ -7,8 +7,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 6.times do |i|
   Team.create(name: "名無し#{i+1}")
-end
-6.times do |i|
   School.create(name: "サンプル#{i+1}高校")
   Opponent.create(school_id: School.find(1).id, name: "相手の名前#{i+1}")
 end
+Match.create(school_id: School.find(1).id, place: "サンプル会場")

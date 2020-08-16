@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "api/matches" => "matches#index"
+  get "api/places" => "places#index"
   get "api/opponents" => "opponents#index"
   get "api/opponents/:id" => "opponents#show"
   get "api/schools" => "schools#index"

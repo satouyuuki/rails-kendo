@@ -1,9 +1,11 @@
 .match-table {
   display: flex;
   flex-direction: row;
+  justify-content: center;
   max-width: 700px;
   &__icon {
     width: 40px;
+    display: inline-block;
     img {
       width: 100%;
       height: auto;
@@ -25,8 +27,7 @@
     flex-direction: column;
     flex-grow: 1;
     background-color: $white;
-    max-width: 100px;
-    max-height: 300px;
+    max-width: 130px;
     %table-cell {
       display: inline-block;
       width: 100%;
