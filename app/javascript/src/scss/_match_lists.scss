@@ -3,7 +3,22 @@
   flex-direction: row;
   max-width: 700px;
   &__icon {
-    width: 40%;
+    width: 40px;
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+  &__cells {
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    &--item {
+      width: 150px;
+      background-color: $light-gray;
+      min-height: 70px;
+      border: 1px solid $grey;
+    }
   }
   &__list {
     display: flex;
@@ -22,11 +37,6 @@
     }
     &--cell {
       @extend %table-cell;
-    }
-    &--cell2 {
-      @extend %table-cell;
-      background-color: $light-gray;
-      min-height: 70px;
     }
   }
 }

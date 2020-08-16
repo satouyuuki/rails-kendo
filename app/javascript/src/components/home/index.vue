@@ -32,16 +32,10 @@
         </div>
       </div>
       <!-- 試合表 -->
-      <div class="match-table__list">
-        <div class="match-table__list--cell2"         v-on:click="toggleHanteiShow"
-        >
-        <div v-if="items.length">
-          <div v-for="item in items" :key="item">
-            <img :src="item" class="match-table__icon">
-          </div>
-        </div>
-        </div>
-      </div>
+      <masu 
+        :cells="cells"
+        @toggleHanteiShow="toggleHanteiShow"
+      />
       <!-- 相手のチーム -->
       <div class="match-table__list">
         <div 
@@ -66,6 +60,7 @@ import dou from '../../assets/images/dou.svg'
 import hanteiModal from './hanteiModal.vue';
 import memberModal from './memberModal.vue';
 import opponentModal from './opponentModal.vue';
+import masu from './masu.vue';
 const images = {
   0: men,
   1: kote,
@@ -76,6 +71,7 @@ export default {
     hanteiModal,
     memberModal,
     opponentModal,
+    masu,
   },
   name: "index",
   data: () => {
@@ -98,13 +94,28 @@ export default {
         {id: 4, name: ""},
         {id: 5, name: ""},
       ],
+      cells: [
+        { id: 1, items: [] },
+        { id: 2, items: [] },
+        { id: 3, items: [] },
+        { id: 4, items: [] },
+        { id: 5, items: [] },
+        { id: 6, items: [] },
+        { id: 7, items: [] },
+        { id: 8, items: [] },
+        { id: 9, items: [] },
+        { id: 10, items: [] },
+      ],
+      masuId: 0,
       schoolName: "△△高校",
     }
   },
   computed: {
   },
   methods: {
-    toggleHanteiShow() {
+    toggleHanteiShow(id) {
+      console.log(id);
+      this.masuId = id;
       this.isHanteiModalShow = !this.isHanteiModalShow;
     },
     toggleMemberShow() {
@@ -114,7 +125,11 @@ export default {
       this.isOpponentModalShow = !this.isOpponentModalShow;
     },
     selectImg(index) {
-      this.items.push(images[index]);
+      const cell = this.cells
+        .filter(cell => cell.id === this.masuId)
+        .map(map => {
+          map.items.push(images[index]);
+        });
     },
     decisionMember(members) {
       this.regMembers = members;
