@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link to="/list">一覧ページ</router-link>
+    <router-link to="{name='list'}">一覧ページ</router-link>
     <hanteiModal 
       :isHanteiModalShow="isHanteiModalShow"
       @toggleHanteiShow="toggleHanteiShow"

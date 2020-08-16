@@ -8,6 +8,7 @@
 6.times do |i|
   Team.create(name: "名無し#{i+1}")
   School.create(name: "サンプル#{i+1}高校")
+  Place.create(name: "サンプル会場#{i+1}")
   Opponent.create(school_id: School.find(1).id, name: "相手の名前#{i+1}")
 end
-Match.create(school_id: School.find(1).id, place: "サンプル会場")
+Match.create(school_id: School.find(1).id, place_id: Place.find(1).id)

@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
+  get "api/places" => "places#index"
   get "api/matches" => "matches#index"
+  post "api/matches" => "matches#create"
   get "api/places" => "places#index"
   get "api/opponents" => "opponents#index"
   get "api/opponents/:id" => "opponents#show"
