@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "api/logs" => "logs#index"
+  post "api/logs" => "logs#create"
   get "api/places" => "places#index"
   get "api/matches" => "matches#index"
   post "api/matches" => "matches#create"

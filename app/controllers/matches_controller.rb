@@ -13,8 +13,6 @@ class MatchesController < ApplicationController
   end
   private
   def match_params
-    print 'hoge'
-    p params
     params.require(:match).permit(:school_id, :place_id)
   end
 end

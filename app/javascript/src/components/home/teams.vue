@@ -3,7 +3,7 @@
     <div 
       class="match-table__list--cell"
       v-for="(member, index) in members"
-      :key="member.id"
+      :key="index"
     >
       <template v-if="index === 0">先鋒: {{member.name}}</template> 
       <template v-if="index === 1">次鋒: {{member.name}}</template> 

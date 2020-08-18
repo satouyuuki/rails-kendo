@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_16_111605) do
+ActiveRecord::Schema.define(version: 2020_08_16_140952) do
+
+  create_table "logs", force: :cascade do |t|
+    t.integer "team_id"
+    t.integer "opponent_id"
+    t.integer "match_id"
+    t.string "my_kimete"
+    t.string "aite_kimete"
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_logs_on_match_id"
+    t.index ["opponent_id"], name: "index_logs_on_opponent_id"
+    t.index ["team_id"], name: "index_logs_on_team_id"
+  end
 
   create_table "matches", force: :cascade do |t|
     t.integer "school_id"
