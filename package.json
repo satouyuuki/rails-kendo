@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "5.1.1",
+    "moment": "^2.27.0",
     "vue": "^2.6.11",
     "vue-loader": "^15.9.3",
     "vue-router": "^3.4.2",

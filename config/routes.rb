@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "api/logs" => "logs#index"
+  get "api/logs/:id" => "logs#show"
   post "api/logs" => "logs#create"
   get "api/places" => "places#index"
   get "api/matches" => "matches#index"
