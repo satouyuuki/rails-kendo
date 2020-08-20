@@ -22,4 +22,10 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adapter: mysql2
+  encoding: utf8
+  database: <%= ENV['DATABASE_PROD_NAME'] %>
+  pool: 5
+  username: <%= ENV['DATABASE_PROD_USER'] %>
+  password: <%= ENV['DATABASE_PROD_PASSWORD'] %>
+  host: <%= ENV['DATABASE_PROD_HOST'] %>
