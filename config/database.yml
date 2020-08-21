@@ -23,6 +23,7 @@ test:
 production:
   <<: *default
   adapter: mysql2
+  charset: utf8
   encoding: utf8
   database: <%= ENV['DATABASE_PROD_NAME'] %>
   pool: 5
