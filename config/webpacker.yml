@@ -53,7 +53,7 @@ development:
   compile: true
 
   # Set to false if using HMR for CSS
-  extract_css: true
+  extract_css: false
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
