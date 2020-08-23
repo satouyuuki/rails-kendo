@@ -2,7 +2,7 @@ import Vue from 'vue/dist/vue.esm';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
-import HomeIndex from './components/home/index.vue';
+import HomeIndex from './components/pages/index.vue';
 import NewMatch from './components/pages/newMatch.vue';
 import MatchList from './components/pages/matchList.vue';
 import MatchDetail from './components/pages/matchDetail.vue';

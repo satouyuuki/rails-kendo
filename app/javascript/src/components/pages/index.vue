@@ -44,11 +44,11 @@
   </div>
 </template>
 <script>
-import hanteiModal from './hanteiModal.vue';
-import memberModal from './memberModal.vue';
-import opponentModal from './opponentModal.vue';
-import masu from './masu.vue';
-import teams from './teams.vue';
+import hanteiModal from '../home/hanteiModal.vue';
+import memberModal from '../home/memberModal.vue';
+import opponentModal from '../home/opponentModal.vue';
+import masu from '../home/masu.vue';
+import teams from '../home/teams.vue';
 export default {
   components: {
     hanteiModal,

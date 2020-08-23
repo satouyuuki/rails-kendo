@@ -46,14 +46,12 @@ export default {
         { id: 9, items: [] },
         { id: 10, items: [] },
       ],
-      schoolName: '',
     }
   },
   mounted() {
     fetch(`api/logs/${this.$route.params.matchId}`)
     .then(res => res.json())
     .then(res => {
-      console.log(res);
       const oddCells = this.cells.filter(cell => cell.id % 2 !== 0);
       const evenCells = this.cells.filter(cell => cell.id % 2 === 0);
       this.schoolName = res[0].o_school;
