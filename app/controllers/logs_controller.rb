@@ -1,11 +1,26 @@
 class LogsController < ApplicationController
-  before_action :set_log, only: [:show]
   def index
     logs = Log.all.select
     render json: logs
   end
   def show
-    render json: @log
+    # jbuilder eger-load
+    @logs = Log.where(match_id: params[:id])
+    # ログモデルのインスタンス
+    # [1,2,3] => [2,4,6]
+    # [1,2,3].map {|n| n*2}
+    render json: @logs.map {|n| {
+      t_name: n.team.name, 
+      o_name: n.opponent.name, 
+      o_school: n.match.school.name, 
+      place: n.match.place.name, 
+      match_id: n.match_id,
+      opponent_id: n.opponent_id,
+      team_id: n.team_id,
+      position: n.position,
+      my_kimete: n.my_kimete,
+      aite_kimete: n.aite_kimete,
+    }}
   end
   def create
     hogehoge = params['_json']
@@ -24,12 +39,8 @@ class LogsController < ApplicationController
     Log.import logs, on_duplicate_key_update: [:team_id, :opponent_id, :my_kimete, :aite_kimete, :position]
     render json: logs
   end
-  private
-  def set_log
-    @log = Log.all.where(match_id: params[:id])
-  end
 
-  def log_params
-    params.permit('_json': [:team_id, :opponent_id, :match_id, :my_kimete, :aite_kimete, :position])
-  end
+  # def log_params
+  #   params.permit('_json': [:team_id, :opponent_id, :match_id, :my_kimete, :aite_kimete, :position, :name])
+  # end
 end
