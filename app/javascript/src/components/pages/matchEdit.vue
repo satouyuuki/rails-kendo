@@ -24,12 +24,12 @@
 
 </template>
 <script>
-import hanteiModal from '../home/hanteiModal.vue';
+// import hanteiModal from '../home/hanteiModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
 export default {
   components: {
-    hanteiModal,
+    // hanteiModal,
     masu,
     teams,
   },

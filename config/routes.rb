@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   post "api/logs" => "logs#create"
   get "api/places" => "places#index"
   get "api/matches" => "matches#index"
+  get "api/matches/:id" => "matches#show"
+  delete "api/matches/:id" => "matches#delete"
   post "api/matches" => "matches#create"
   get "api/places" => "places#index"
   get "api/opponents" => "opponents#index"

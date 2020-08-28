@@ -15,11 +15,18 @@
     display: flex;
     flex-wrap: wrap;
     width: 300px;
-    &--item {
-      width: 150px;
-      background-color: $light-gray;
-      min-height: 70px;
-      border: 1px solid $grey;
+  }
+  &__cell {
+    display: flex;
+    width: 100%;
+    background-color: $light-gray;
+    min-height: 70px;
+    border: 1px solid $grey;
+  }
+  &__item {
+    width: 50%;
+    &:first-child {
+      border-right: 1px solid $grey;
     }
   }
   &__list {
@@ -41,3 +48,4 @@
     }
   }
 }
+

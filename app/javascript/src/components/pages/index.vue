@@ -1,11 +1,6 @@
 <template>
   <div>
     <router-link :to="{name: 'list'}">一覧ページ</router-link>
-    <hanteiModal 
-      :isHanteiModalShow="isHanteiModalShow"
-      @toggleHanteiShow="toggleHanteiShow"
-      @selectImg="selectImg"
-    />
     <memberModal 
       :isMemberModalShow="isMemberModalShow"
       @toggleMemberShow="toggleMemberShow"
@@ -16,8 +11,13 @@
       @toggleOpponentShow="toggleOpponentShow"
       @decisionOpponent="decisionOpponent"
     />
-    <h1>試合表</h1>
-    <span>2020/8/6(水)</span>
+    <h1>新規試合表作成</h1>
+    <div>
+      会場: {{placeName}}
+    </div>
+    <div>
+      日付: {{dateFormat(detailDate)}}
+    </div>
     <button type="button" class="print" onclick="window.print();">印刷</button>
     <button type="button" class="member" v-on:click="toggleMemberShow">メンバー編成</button>
     <button type="button" class="member" v-on:click="toggleOpponentShow">相手チーム</button>
@@ -31,6 +31,7 @@
       <masu 
         :cells="cells"
         @toggleHanteiShow="toggleHanteiShow"
+        @selectImg="selectImg"
       />
       <!-- 相手のチーム -->
       <teams 
@@ -44,23 +45,26 @@
   </div>
 </template>
 <script>
-import hanteiModal from '../home/hanteiModal.vue';
 import memberModal from '../home/memberModal.vue';
 import opponentModal from '../home/opponentModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
+import Mixin from '../../mixin';
+const teamMap = {
+  1: 'my_kimete',
+  2: 'aite_kimete'
+};
 export default {
   components: {
-    hanteiModal,
     memberModal,
     opponentModal,
     masu,
     teams,
   },
+  mixins: [Mixin],
   name: "index",
   data: () => {
     return {
-      isHanteiModalShow: false,
       isMemberModalShow: false,
       isOpponentModalShow: false,
       items: [],
@@ -79,35 +83,35 @@ export default {
         {opponent_id: 5, name: "", position: 5},
       ],
       cells: [
-        { id: 1, items: [] },
-        { id: 2, items: [] },
-        { id: 3, items: [] },
-        { id: 4, items: [] },
-        { id: 5, items: [] },
-        { id: 6, items: [] },
-        { id: 7, items: [] },
-        { id: 8, items: [] },
-        { id: 9, items: [] },
-        { id: 10, items: [] },
+        { team_id: 1, opponent_id: 1, my_kimete: [], aite_kimete: [], position: 1},
+        { team_id: 2, opponent_id: 2, my_kimete: [], aite_kimete: [], position: 2},
+        { team_id: 3, opponent_id: 3, my_kimete: [], aite_kimete: [], position: 3},
+        { team_id: 4, opponent_id: 4, my_kimete: [], aite_kimete: [], position: 4},
+        { team_id: 5, opponent_id: 5, my_kimete: [], aite_kimete: [], position: 5},
       ],
       masuId: 0,
-      schoolName: "△△高校",
+      schoolName: "",
+      placeName: "",
+      detailDate: "",
     }
   },
   computed: {
+    getMatchId() {
+      return this.$route.params.matchId;
+    },
     customCells() {
-      const matchID = this.$route.params.matchId;
+      // const matchID = this.$route.params.matchId;
       const result = [];
-      const oddCell = this.cells.filter(item => item.id % 2 !== 0);
-      const evenCell = this.cells.filter(item => item.id % 2 === 0);
+      // const oddCell = this.cells.filter(item => item.id % 2 !== 0);
+      // const evenCell = this.cells.filter(item => item.id % 2 === 0);
       this.regMembers.forEach((item, index) => {
         const cloneRegMember = Object.assign({}, item);
         const cloneOppMember = Object.assign({}, this.oppMembers[index]);
         delete cloneRegMember.name;
         delete cloneOppMember.name;
-        cloneRegMember['my_kimete'] = oddCell[index].items.join(',');
-        cloneRegMember['aite_kimete'] = evenCell[index].items.join(',');
-        cloneRegMember['match_id'] = Number(matchID);
+        cloneRegMember['my_kimete'] = this.cells[index].my_kimete.join(',');
+        cloneRegMember['aite_kimete'] = this.cells[index].aite_kimete.join(',');
+        cloneRegMember['match_id'] = Number(this.getMatchId);
         result.push(Object.assign(cloneRegMember, cloneOppMember));
       })
       // console.log(result);
@@ -130,8 +134,9 @@ export default {
       .catch(err => console.log(err));
     },
     toggleHanteiShow(id) {
+      console.log(id);
       this.masuId = id;
-      this.isHanteiModalShow = !this.isHanteiModalShow;
+      // this.isHanteiModalShow = !this.isHanteiModalShow;
     },
     toggleMemberShow() {
       this.isMemberModalShow = !this.isMemberModalShow;
@@ -139,11 +144,13 @@ export default {
     toggleOpponentShow() {
       this.isOpponentModalShow = !this.isOpponentModalShow;
     },
-    selectImg(index) {
+    selectImg(val) {
+      const index = val.index;
+      const checkTeam = val.checkTeam;
       const cell = this.cells
-        .filter(cell => cell.id === this.masuId)
+        .filter(cell => cell.position === this.masuId)
         .map(map => {
-          map.items.push(index);
+          map[teamMap[checkTeam]].push(index);
         });
     },
     decisionMember(members) {
@@ -162,7 +169,15 @@ export default {
       if(members[1]) this.schoolName = members[1];
     },
   },
-  mounted() {
+  created() {
+    fetch(`api/matches/${this.getMatchId}`)
+    .then(res => res.json())
+    .then(res =>  {
+      this.schoolName = res.school_name;
+      this.placeName = res.place_name;
+      this.detailDate = res.create_date;
+    })
+    .catch(err => console.log(err));
   }
 }
 </script>
