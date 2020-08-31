@@ -79,7 +79,7 @@ export default {
     }
   },
   created() {
-    fetch('api/schools')
+    fetch('/api/schools')
       .then(res => {
         return res.json();
       })

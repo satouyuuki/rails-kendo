@@ -16,6 +16,7 @@ const router = new VueRouter({
       path: '/',
       component: baseLayout,
       children: [
+        { path: '', component: MatchList, name: 'list' },
         {
           path: 'new/:matchId',
           component: HomeIndex,

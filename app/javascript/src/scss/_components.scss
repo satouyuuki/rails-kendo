@@ -1,0 +1,15 @@
+.point-icon {
+  width: 40px;
+  display: inline-block;
+  position: relative;
+  &__del {
+    position: absolute;
+    width: 15px;
+    right: -10px;
+    top: -10px;
+  }
+  &__img {
+    width: 100%;
+    height: auto;
+  }
+}

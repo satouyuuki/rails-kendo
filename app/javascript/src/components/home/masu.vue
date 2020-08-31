@@ -2,19 +2,19 @@
   <div>
     <div class="match-table__cells">
       <div 
-      v-for="cell in cells"
-      :key="cell.position"
+      v-for="(cell, index) in cells"
+      :key="index"
       class="match-table__cell"
       v-on:click="openHanteiModal(cell)"
       >
         <div class="match-table__item">
-          <div v-for="myitem in cell.my_kimete" :key="myitem" class="match-table__icon">
-            <img :src="images[myitem]">
+          <div v-for="myitem in cell.my_kimete" :key="myitem" class="point-icon">
+            <img :src="images[myitem]" class="point-icon__img">
           </div>
         </div>
         <div class="match-table__item">
-          <div v-for="aiteitem in cell.aite_kimete" :key="aiteitem" class="match-table__icon">
-            <img :src="images[aiteitem]">
+          <div v-for="aiteitem in cell.aite_kimete" :key="aiteitem" class="point-icon">
+            <img :src="images[aiteitem]" class="point-icon__img">
           </div>          
         </div>
       </div>
@@ -22,6 +22,7 @@
     <hanteiModal 
       ref="hanteiRef"
       @selectImg="selectImg"
+      @deletePoint="deletePoint"
     />
   </div>
 </template>
@@ -62,6 +63,9 @@ export default {
     },
     selectImg(val) {
       this.$emit('selectImg', val);
+    },
+    deletePoint(val) {
+      this.$emit('deletePoint', val);
     }
   }
 }

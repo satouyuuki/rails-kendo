@@ -1,15 +1,13 @@
 <template>
   <div>
-    <router-link :to="{name: 'list'}">一覧ページ</router-link>
     <memberModal 
-      :isMemberModalShow="isMemberModalShow"
-      @toggleMemberShow="toggleMemberShow"
       @decisionMember="decisionMember"
+      ref="memberModalRef"
+      :modalType="modalType"
+      :schoolId="schoolData.schoolId"
     />
-    <opponentModal 
-      :isOpponentModalShow="isOpponentModalShow"
-      @toggleOpponentShow="toggleOpponentShow"
-      @decisionOpponent="decisionOpponent"
+    <selectMemberModal 
+      ref="selectMemberModal"
     />
     <h1>新規試合表作成</h1>
     <div>
@@ -19,9 +17,8 @@
       日付: {{dateFormat(detailDate)}}
     </div>
     <button type="button" class="print" onclick="window.print();">印刷</button>
-    <button type="button" class="member" v-on:click="toggleMemberShow">メンバー編成</button>
-    <button type="button" class="member" v-on:click="toggleOpponentShow">相手チーム</button>
-    <button type="button" v-on:click="createLog">作成</button>
+    <button type="button" class="member" @click="openMemberChangeModal(1)">メンバー編成</button>
+    <button type="button" class="member" @click="openMemberChangeModal(2)">相手チーム</button>
     <div class="match-table">
       <!-- 自分のチーム -->
       <teams 
@@ -32,6 +29,7 @@
         :cells="cells"
         @toggleHanteiShow="toggleHanteiShow"
         @selectImg="selectImg"
+        @deletePoint="deletePoint"
       />
       <!-- 相手のチーム -->
       <teams 
@@ -39,25 +37,25 @@
       />
       <div class="match-table__list">
         <div class="match-table__list--cell">自分の高校</div>
-        <div class="match-table__list--cell">{{schoolName}}</div>
+        <div class="match-table__list--cell">{{schoolData.schoolName}}</div>
       </div>
+    </div>
+    <div class="hantei-text" v-bind:class="{ 'win': hanteiTextNum === 1, 'lose':hanteiTextNum === 2 }">
+      {{getWinRate}}
     </div>
   </div>
 </template>
 <script>
 import memberModal from '../home/memberModal.vue';
-import opponentModal from '../home/opponentModal.vue';
+import selectMemberModal from '../home/selectMemberModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
 import Mixin from '../../mixin';
-const teamMap = {
-  1: 'my_kimete',
-  2: 'aite_kimete'
-};
+import {teamMap, hanteiText} from '../../constant';
 export default {
   components: {
     memberModal,
-    opponentModal,
+    selectMemberModal,
     masu,
     teams,
   },
@@ -65,8 +63,6 @@ export default {
   name: "index",
   data: () => {
     return {
-      isMemberModalShow: false,
-      isOpponentModalShow: false,
       items: [],
       regMembers: [
         {team_id: 1, name: "", position: 1},
@@ -90,20 +86,47 @@ export default {
         { team_id: 5, opponent_id: 5, my_kimete: [], aite_kimete: [], position: 5},
       ],
       masuId: 0,
-      schoolName: "",
+      schoolData: {
+        schoolId: 0,
+        schoolName: ''
+      },
       placeName: "",
       detailDate: "",
+      hanteiTextNum: 3,
+      modalType: 0
     }
   },
   computed: {
+    getWinRate() {
+      let allMyPoints = 0;
+      let allAitePoints = 0;
+      let myWinNum = 0;
+      let aiteWinNum = 0;
+      this.cells.forEach(({my_kimete, aite_kimete}) => {
+        if(my_kimete.length > 0) {
+          allMyPoints += my_kimete.length;
+        }
+        if(aite_kimete.length > 0) {
+          allAitePoints += aite_kimete.length;
+        }
+        if (my_kimete.length !== aite_kimete.length) {
+          my_kimete.length > aite_kimete.length ? myWinNum++ : aiteWinNum++;
+        }
+      });
+      if(myWinNum > aiteWinNum) {
+        this.hanteiTextNum = 1;
+      } 
+      else if (myWinNum === aiteWinNum) {
+        if(allMyPoints === allAitePoints) this.hanteiTextNum = 3;
+        allMyPoints > allAitePoints ? this.hanteiTextNum = 1 : (allMyPoints === allAitePoints ? this.hanteiTextNum = 3 : this.hanteiTextNum = 2);
+      }
+      return `${myWinNum}(${allMyPoints}) - ${aiteWinNum}(${allAitePoints}) = ${hanteiText[this.hanteiTextNum]}`;
+    },
     getMatchId() {
       return this.$route.params.matchId;
     },
     customCells() {
-      // const matchID = this.$route.params.matchId;
       const result = [];
-      // const oddCell = this.cells.filter(item => item.id % 2 !== 0);
-      // const evenCell = this.cells.filter(item => item.id % 2 === 0);
       this.regMembers.forEach((item, index) => {
         const cloneRegMember = Object.assign({}, item);
         const cloneOppMember = Object.assign({}, this.oppMembers[index]);
@@ -114,13 +137,19 @@ export default {
         cloneRegMember['match_id'] = Number(this.getMatchId);
         result.push(Object.assign(cloneRegMember, cloneOppMember));
       })
-      // console.log(result);
       return result
     }
   },
   methods: {
+    openMemberChangeModal(id) {
+      this.modalType = id;
+      this.$refs.memberModalRef.open();
+    },
+    testModal() {
+      this.$refs.selectMemberModal.open();
+    },
     createLog() {
-      fetch('api/logs', {
+      fetch('/api/logs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,15 +163,7 @@ export default {
       .catch(err => console.log(err));
     },
     toggleHanteiShow(id) {
-      console.log(id);
       this.masuId = id;
-      // this.isHanteiModalShow = !this.isHanteiModalShow;
-    },
-    toggleMemberShow() {
-      this.isMemberModalShow = !this.isMemberModalShow;
-    },
-    toggleOpponentShow() {
-      this.isOpponentModalShow = !this.isOpponentModalShow;
     },
     selectImg(val) {
       const index = val.index;
@@ -153,27 +174,45 @@ export default {
           map[teamMap[checkTeam]].push(index);
         });
     },
-    decisionMember(members) {
-      if(!members || members.length < 5) return;
-      this.regMembers.map((map, index) => {
-        map.team_id = members[index].id;
-        map.name = members[index].name;
-      })
+    deletePoint(val) {
+      const item = val.item;
+      const checkTeam = val.checkTeam;
+      const cell = this.cells
+        .filter(cell => cell.position === this.masuId)
+        .map(map => {
+          const targetTeam = map[teamMap[checkTeam]];
+          const targetIndex = targetTeam.indexOf(item);
+          if(targetIndex >= 0) {
+            targetTeam.splice(targetIndex, 1);
+            map[teamMap[checkTeam]] = targetTeam;
+          }
+        });
     },
-    decisionOpponent(members) {
-      if(!members[1] || !members[0] || members[0].length < 5) return;
-      this.oppMembers.map((map, index) => {
-        map.opponent_id = members[0][index].id;
-        map.name = members[0][index].name;
-      })
-      if(members[1]) this.schoolName = members[1];
+    decisionMember(members) {
+      // const members = val.members;
+      // const modalType = val.modalType;
+      if(!members || members.length < 5) return;
+      if(this.modalType == 1) {
+        this.regMembers.map((map, index) => {
+          map.team_id = members[index].id;
+          map.name = members[index].name;
+        })
+      }else if(this.modalType == 2) {
+        this.oppMembers.map((map, index) => {
+          map.opponent_id = members[0][index].id;
+          map.name = members[0][index].name;
+        })
+      }
     },
   },
   created() {
-    fetch(`api/matches/${this.getMatchId}`)
+    fetch(`/api/matches/${this.getMatchId}`)
     .then(res => res.json())
     .then(res =>  {
-      this.schoolName = res.school_name;
+      this.schoolData = {
+        schoolId: res.school_id,
+        schoolName: res.school_name
+      };
       this.placeName = res.place_name;
       this.detailDate = res.create_date;
     })
@@ -181,3 +220,15 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.hantei-text {
+  font-size: 2rem;
+  text-align: center;
+  &.win {
+    color: red;
+  }
+  &.lose {
+    color: blue;
+  }
+}
+</style>

@@ -6,6 +6,7 @@ class MatchesController < ApplicationController
   def show
     @match = Match.where(id: params[:id])
     render json: @match.map {|n| {
+      school_id: n.school.id,
       school_name: n.school.name,
       place_name: n.place.name,
       create_date: n.created_at

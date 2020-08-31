@@ -49,7 +49,7 @@ export default {
     }
   },
   mounted() {
-    fetch(`api/logs/${this.$route.params.matchId}`)
+    fetch(`/api/logs/${this.$route.params.matchId}`)
     .then(res => res.json())
     .then(res => {
       const oddCells = this.cells.filter(cell => cell.id % 2 !== 0);
