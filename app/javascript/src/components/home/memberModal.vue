@@ -5,12 +5,7 @@
   >
     <button @click="addMember">決定</button>
     <draggable class="draggable-wrap" v-model="members" group="Regular" @start="drag=true" @end="drag=false">
-      <div class="draggable" v-for="member in members" :key="member.id">
-        {{member.name}}
-      </div>
-    </draggable>
-    <draggable class="draggable-wrap" v-model="regMembers" group="Regular" @start="drag=true" @end="drag=false">
-      <div class="draggable" v-for="member in regMembers" :key="member.id">
+      <div class="draggable" v-for="member in members" :key="member.position">
         {{member.name}}
       </div>
     </draggable>
@@ -19,10 +14,7 @@
 <script>
 import BaseModal from '../parts/BaseModal';
 import draggable from 'vuedraggable';
-const modalType = {
-  1: 'member',
-  2: 'opponent',
-}
+
 export default {
   name: "memberModal",
   components: {
@@ -30,8 +22,7 @@ export default {
     BaseModal
   },
   props: [
-    'modalType',
-    'schoolId',
+    'regMembers'
   ],
   data: () => {
     return {
@@ -39,43 +30,17 @@ export default {
         group: "Regular"
       },
       members: [],
-      regMembers: [],
     }
   },
   methods: {
     open() {
-      this.setMembers();
       this.$refs.BaseModalRef.open();
+      this.members = this.regMembers;
     },
     addMember() {
-      const data = {
-        modalType: this.modalType,
-        members: this.regMembers
-      }
-      this.$emit('decisionMember', this.regMembers);
+      this.$emit('decisionMember', this.members);
       this.$refs.BaseModalRef.close();
     },
-    async setMembers() {
-      await this.$nextTick();
-      if(this.modalType == 1) {
-        fetch('/api/teams')
-          .then(res => {
-            return res.json();
-          })
-          .then(res => {
-            this.members = res;
-          })
-      }
-      if(this.modalType == 2) {
-        fetch(`/api/opponents/${this.schoolId}`)
-          .then(res => {
-            return res.json();
-          })
-          .then(res => {
-            this.members = res;
-          })
-      }
-    }
   },
 }
 </script>

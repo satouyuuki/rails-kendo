@@ -1,8 +1,8 @@
 <template>
-  <div class="match-table__list">
+  <div class="member-list">
     <div 
-      class="match-table__list--cell"
-      v-for="(member, index) in members"
+      class="member-list__cell"
+      v-for="(member, index) in selectedMembers"
       :key="index"
     >
       <template v-if="index === 0">先鋒: {{member.name}}</template> 
@@ -18,6 +18,37 @@ export default {
   name: "teams",
   props: [
     "members",
-  ]
+  ],
+  computed: {
+    selectedMembers() {
+      const membersClone = this.members;
+      const memNum = membersClone.length;
+      if(memNum > 5) {
+        return membersClone.filter(n => n.position <= 5);
+      } 
+      return membersClone;
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+@import "../../scss/variable.scss";
+.member-list {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: $white;
+  max-width: 130px;
+  %table-cell {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid $grey;
+  }
+  &__cell {
+    @extend %table-cell;
+  }
+}
+</style>

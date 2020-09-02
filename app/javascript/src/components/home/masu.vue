@@ -1,19 +1,19 @@
 <template>
-  <div>
-    <div class="match-table__cells">
+  <div class="masu-list">
+    <div class="masu-list__cells">
       <div 
       v-for="(cell, index) in cells"
       :key="index"
-      class="match-table__cell"
+      class="masu-list__cell"
       v-on:click="openHanteiModal(cell)"
       >
-        <div class="match-table__item">
-          <div v-for="myitem in cell.my_kimete" :key="myitem" class="point-icon">
+        <div class="masu-list__item">
+          <div v-for="(myitem, index) in cell.my_kimete" :key="index" class="point-icon">
             <img :src="images[myitem]" class="point-icon__img">
           </div>
         </div>
-        <div class="match-table__item">
-          <div v-for="aiteitem in cell.aite_kimete" :key="aiteitem" class="point-icon">
+        <div class="masu-list__item">
+          <div v-for="(aiteitem, index) in cell.aite_kimete" :key="index" class="point-icon">
             <img :src="images[aiteitem]" class="point-icon__img">
           </div>          
         </div>
@@ -70,3 +70,27 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+@import "../../scss/variable.scss";
+.masu-list {
+  display: flex;
+  &__cells {
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+  }
+  &__cell {
+    display: flex;
+    width: 100%;
+    background-color: $light-grey;
+    min-height: 70px;
+    border: 1px solid $grey;
+  }
+  &__item {
+    width: 50%;
+    &:first-child {
+      border-right: 1px solid $grey;
+    }
+  }
+}
+</style>

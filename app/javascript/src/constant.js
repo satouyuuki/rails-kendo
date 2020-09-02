@@ -7,3 +7,7 @@ export const hanteiText = {
   2: '負',
   3: '引き分け'
 };
+export const modalType = {
+  1: 'member',
+  2: 'opponent',
+}

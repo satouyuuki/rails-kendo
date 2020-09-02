@@ -1,13 +1,14 @@
 <template>
   <div>
     <memberModal 
-      @decisionMember="decisionMember"
       ref="memberModalRef"
-      :modalType="modalType"
-      :schoolId="schoolData.schoolId"
+      @decisionMember="decisionMember"
+      :regMembers="regMembers"
     />
-    <selectMemberModal 
-      ref="selectMemberModal"
+    <memberModal 
+      ref="opponentModalRef"
+      @decisionMember="decisionMember"
+      :regMembers="oppMembers"
     />
     <h1>新規試合表作成</h1>
     <div>
@@ -19,11 +20,15 @@
     <button type="button" class="print" onclick="window.print();">印刷</button>
     <button type="button" class="member" @click="openMemberChangeModal(1)">メンバー編成</button>
     <button type="button" class="member" @click="openMemberChangeModal(2)">相手チーム</button>
+    <button type="button" class="member" @click="createLog">作成</button>
+
     <div class="match-table">
+      <div class="table-head">
+        <div class="table-head__cell">自分の高校</div>
+        <div class="table-head__cell">{{schoolData.schoolName}}</div>
+      </div>
       <!-- 自分のチーム -->
-      <teams 
-        :members="regMembers"
-      />
+      <teams :members="regMembers"/>
       <!-- 試合表 -->
       <masu 
         :cells="cells"
@@ -32,13 +37,7 @@
         @deletePoint="deletePoint"
       />
       <!-- 相手のチーム -->
-      <teams 
-        :members="oppMembers"
-      />
-      <div class="match-table__list">
-        <div class="match-table__list--cell">自分の高校</div>
-        <div class="match-table__list--cell">{{schoolData.schoolName}}</div>
-      </div>
+      <teams :members="oppMembers"/>
     </div>
     <div class="hantei-text" v-bind:class="{ 'win': hanteiTextNum === 1, 'lose':hanteiTextNum === 2 }">
       {{getWinRate}}
@@ -51,7 +50,7 @@ import selectMemberModal from '../home/selectMemberModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
 import Mixin from '../../mixin';
-import {teamMap, hanteiText} from '../../constant';
+import {teamMap, hanteiText, modalType} from '../../constant';
 export default {
   components: {
     memberModal,
@@ -63,21 +62,8 @@ export default {
   name: "index",
   data: () => {
     return {
-      items: [],
-      regMembers: [
-        {team_id: 1, name: "", position: 1},
-        {team_id: 2, name: "", position: 2},
-        {team_id: 3, name: "", position: 3},
-        {team_id: 4, name: "", position: 4},
-        {team_id: 5, name: "", position: 5},
-      ],
-      oppMembers: [
-        {opponent_id: 1, name: "", position: 1},
-        {opponent_id: 2, name: "", position: 2},
-        {opponent_id: 3, name: "", position: 3},
-        {opponent_id: 4, name: "", position: 4},
-        {opponent_id: 5, name: "", position: 5},
-      ],
+      regMembers: [],
+      oppMembers: [],
       cells: [
         { team_id: 1, opponent_id: 1, my_kimete: [], aite_kimete: [], position: 1},
         { team_id: 2, opponent_id: 2, my_kimete: [], aite_kimete: [], position: 2},
@@ -93,7 +79,7 @@ export default {
       placeName: "",
       detailDate: "",
       hanteiTextNum: 3,
-      modalType: 0
+      modalType: ""
     }
   },
   computed: {
@@ -126,24 +112,38 @@ export default {
       return this.$route.params.matchId;
     },
     customCells() {
-      const result = [];
-      this.regMembers.forEach((item, index) => {
-        const cloneRegMember = Object.assign({}, item);
-        const cloneOppMember = Object.assign({}, this.oppMembers[index]);
-        delete cloneRegMember.name;
-        delete cloneOppMember.name;
-        cloneRegMember['my_kimete'] = this.cells[index].my_kimete.join(',');
-        cloneRegMember['aite_kimete'] = this.cells[index].aite_kimete.join(',');
-        cloneRegMember['match_id'] = Number(this.getMatchId);
-        result.push(Object.assign(cloneRegMember, cloneOppMember));
-      })
-      return result
+      
+      const cloneCells = this.cells.map(map => {
+        // map['match_id'] = Number(this.getMatchId);
+        map.match_id = Number(this.getMatchId);
+        map.aite_kimete = map.aite_kimete.join(',');
+        map.my_kimete = map.my_kimete.join(',');
+        return map;
+      });
+      return cloneCells;
+      // const result = [];
+      // this.regMembers.forEach((item, index) => {
+      //   const cloneRegMember = Object.assign({}, item);
+      //   const cloneOppMember = Object.assign({}, this.oppMembers[index]);
+      //   delete cloneRegMember.name;
+      //   delete cloneOppMember.name;
+      //   cloneRegMember['my_kimete'] = this.cells[index].my_kimete.join(',');
+      //   cloneRegMember['aite_kimete'] = this.cells[index].aite_kimete.join(',');
+      //   cloneRegMember['match_id'] = Number(this.getMatchId);
+      //   result.push(Object.assign(cloneRegMember, cloneOppMember));
+      // })
+      // return result
     }
   },
   methods: {
     openMemberChangeModal(id) {
-      this.modalType = id;
-      this.$refs.memberModalRef.open();
+      this.modalType = modalType[id];
+      if(this.modalType === 'member') {
+        this.$refs.memberModalRef.open();
+      }
+      else if(this.modalType === 'opponent') {
+        this.$refs.opponentModalRef.open();
+      }
     },
     testModal() {
       this.$refs.selectMemberModal.open();
@@ -189,38 +189,78 @@ export default {
         });
     },
     decisionMember(members) {
-      // const members = val.members;
-      // const modalType = val.modalType;
       if(!members || members.length < 5) return;
-      if(this.modalType == 1) {
+      if(this.modalType === 'member') {
         this.regMembers.map((map, index) => {
-          map.team_id = members[index].id;
+          map.team_id = members[index].team_id;
           map.name = members[index].name;
         })
-      }else if(this.modalType == 2) {
+      }
+      if(this.modalType === 'opponent') {
         this.oppMembers.map((map, index) => {
-          map.opponent_id = members[0][index].id;
-          map.name = members[0][index].name;
+          map.opponent_id = members[index].opponent_id;
+          map.name = members[index].name;
         })
       }
     },
+    async getMatches() {
+      return fetch(`/api/matches/${this.getMatchId}`)
+        .then(res => res.json())
+        .then(res =>  {
+          this.schoolData = {
+            schoolId: res.school_id,
+            schoolName: res.school_name
+          };
+          this.placeName = res.place_name;
+          this.detailDate = res.create_date;
+        })
+        .catch(err => console.log(err));
+    },
+    getOpponents() {
+      fetch(`/api/opponents/${this.schoolData.schoolId}`)
+        .then(res => res.json())
+        .then(res =>  {
+          res.map((map, index) => {
+            this.oppMembers.push({
+              opponent_id: map.id,
+              name: map.name,
+              position: index + 1
+            })
+          })
+          console.log(res);
+        })
+        .catch(err => console.log(err));
+    },
+    getTeams() {
+      fetch('/api/teams')
+        .then(res => res.json())
+        .then(res =>  {
+          res.map((map, index) => {
+            this.regMembers.push({
+              team_id: map.id,
+              name: map.name,
+              position: index + 1
+            })
+          })
+        })
+        .catch(err => console.log(err));
+    }
   },
-  created() {
-    fetch(`/api/matches/${this.getMatchId}`)
-    .then(res => res.json())
-    .then(res =>  {
-      this.schoolData = {
-        schoolId: res.school_id,
-        schoolName: res.school_name
-      };
-      this.placeName = res.place_name;
-      this.detailDate = res.create_date;
-    })
-    .catch(err => console.log(err));
+  async created() {
+    await this.getMatches();
+    this.getOpponents();
+    this.getTeams();
   }
 }
 </script>
 <style scoped lang="scss">
+.table-head{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  &__cell {
+  }
+}
 .hantei-text {
   font-size: 2rem;
   text-align: center;

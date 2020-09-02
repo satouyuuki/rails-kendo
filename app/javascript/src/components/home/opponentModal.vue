@@ -1,42 +1,31 @@
 <template>
-  <div class="mask" v-if="isOpponentModalShow" v-on:click.self="onToggleShow">
-    <div class="m-card">
-      <button type="button" class="m-card__close-btn" v-on:click="onToggleShow">閉じる</button>
-      <!-- 高校が選択されていない画面 -->
-      <div v-if="!isSelectedSchool">
-        <h2>高校を選択</h2>
-        <ul>
-          <li v-for="school in schools" :key="school.id" @click="selectSchool(school)">
-            {{school.name}}
-          </li>
-        </ul>
+  <BaseModal 
+    ref="BaseModalRef"
+    title="レギュラー編成"
+  >
+    <button @click="addMember">決定</button>
+    <draggable class="draggable-wrap" v-model="members" group="Regular" @start="drag=true" @end="drag=false">
+      <div class="draggable" v-for="member in members" :key="member.id">
+        {{member.name}}
       </div>
-      <div v-else>
-        <h2>メンバーを編成</h2>
-        <button @click="addMember">決定</button>
-        <draggable class="draggable-wrap" v-model="members" group="Regular" @start="drag=true" @end="drag=false">
-          <div class="draggable" v-for="member in members" :key="member.id">
-            {{member.name}}
-          </div>
-        </draggable>
-        <draggable class="draggable-wrap" v-model="oppMembers" group="Regular" @start="drag=true" @end="drag=false">
-          <div class="draggable" v-for="member in oppMembers" :key="member.id">
-            {{member.name}}
-          </div>
-        </draggable>
-      </div>
-    </div>
-  </div>
+    </draggable>
+  </BaseModal>
 </template>
 <script>
+import BaseModal from '../parts/BaseModal';
 import draggable from 'vuedraggable';
+const modalType = {
+  1: 'member',
+  2: 'opponent',
+}
 export default {
-  name: "opponentModal",
+  name: "memberModal",
   components: {
     draggable,
+    BaseModal
   },
   props: [
-    'isOpponentModalShow',
+    'members'
   ],
   data: () => {
     return {
@@ -44,49 +33,42 @@ export default {
         group: "Regular"
       },
       members: [],
-      oppMembers: [],
-      schools: [],
-      isSelectedSchoolFlg: false,
-      schoolName: "",
     }
-  },
-  computed: {
-    isSelectedSchool() {
-      return this.isSelectedSchoolFlg;
-    }
-
   },
   methods: {
-    onToggleShow() {
-      this.$emit('toggleOpponentShow');
+    open() {
+      this.$refs.BaseModalRef.open();
     },
     addMember() {
-      this.$emit('decisionOpponent', [this.oppMembers, this.schoolName]);
-      this.onToggleShow();
+      const data = {
+        modalType: this.modalType,
+        members: this.regMembers
+      }
+      this.$emit('decisionMember', this.regMembers);
+      this.$refs.BaseModalRef.close();
     },
-    selectSchool(school) {
-      this.isSelectedSchoolFlg = true;
-      this.schoolName = school.name;
-      fetch(`api/opponents/${school.id}`)
-        .then(res => {
-          return res.json();
-        })
-        .then(res => {
-          this.members = res;
-          // this.isSelectedSchool = true;
-        })
-        .catch(err => {});
-    }
   },
-  created() {
-    fetch('/api/schools')
-      .then(res => {
-        return res.json();
-      })
-      .then(res => {
-        this.schools = res;
-      })
-      .catch(err => {});
-  }
 }
 </script>
+<style scoped lang="scss">
+@import '../../scss/variable';
+.draggable {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid $grey;
+  border-radius: 10px;
+  background-color: $white;
+  &:hover {
+    cursor: grab;
+  }
+  &:active {
+    cursor: grabbing;
+  }
+}
+.draggable-wrap {
+  min-width: 100px;
+  min-height: 100px;
+  border: 1px solid $grey;
+}
+</style>

@@ -24,20 +24,20 @@ class LogsController < ApplicationController
   end
   def create
     hogehoge = params['_json']
-    p 'hogehoge'
+    p hogehoge
     logs = []    
-    5.times do |i|
-      logs << Log.new(
-        team_id: hogehoge[i][:team_id], 
-        opponent_id: hogehoge[i][:opponent_id],
-        match_id: hogehoge[i][:match_id],
-        my_kimete: hogehoge[i][:my_kimete],
-        aite_kimete: hogehoge[i][:aite_kimete],
-        position: hogehoge[i][:position]
-      )
-    end
-    Log.import logs, on_duplicate_key_update: [:team_id, :opponent_id, :my_kimete, :aite_kimete, :position]
-    render json: logs
+    # 5.times do |i|
+    #   logs << Log.new(
+    #     team_id: hogehoge[i][:team_id], 
+    #     opponent_id: hogehoge[i][:opponent_id],
+    #     match_id: hogehoge[i][:match_id],
+    #     my_kimete: hogehoge[i][:my_kimete],
+    #     aite_kimete: hogehoge[i][:aite_kimete],
+    #     position: hogehoge[i][:position]
+    #   )
+    # end
+    # Log.import logs, on_duplicate_key_update: [:team_id, :opponent_id, :my_kimete, :aite_kimete, :position]
+    # render json: logs
   end
 
   # def log_params
