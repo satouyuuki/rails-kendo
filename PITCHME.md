@@ -43,7 +43,7 @@ Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtype
 ---
 ### どういうことか
 
----kendo-app/app/javascript/src/router.js&lang=javascript&title=front routing
+---?code=router.js&app/javascript/src/router.js&lang=javascript&title=front routing
 
 DBの設計をする
 ↓
@@ -84,11 +84,11 @@ version6以降では標準実装
 
 ---
 フォルダ構成
-<img src="ltimg/20200905match.png"/>  
+<img src="./ltimg/20200905match.png"/>  
 
 ---
 ### ER図(テーブル)
-<img src="gitpitch-img/table.png"/>  
+<img src="./gitpitch-img/table.png"/>  
 ---
 ### つまり
 - １つのスレッドには0 or 複数のコメント、いいねが結びついている |
