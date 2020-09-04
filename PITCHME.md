@@ -34,8 +34,7 @@ Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtype
 
 ---
 ### ER図(テーブル)
-<img src="ltimg/db.png"/>  
-
+<img src="ltimg/db.jpg"/>  
 ---
 ### 今回一番感動したポイント
 コンポーネント思考ってすげー
@@ -43,13 +42,11 @@ Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtype
 ---
 ### どういうことか
 
----?code=router.js&app/javascript/src/router.js&lang=javascript&title=front routing
+---?code=app/javascript/src/router.js&lang=javascript&title=front routing
 
-DBの設計をする
-↓
-バックエンドを簡単に作る
-↓
-フロントを作る
+@[20-22](同一のコンポーネント)
+---
+<img src="ltimg/20200905match.png"/>  
 
 ---
 ### つまるポイント
