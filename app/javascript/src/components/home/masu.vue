@@ -38,7 +38,8 @@ export default {
     hanteiModal
   },
   props: [
-    'cells'
+    'cells',
+    'viewType'
   ],
   data() {
     return {
@@ -58,8 +59,10 @@ export default {
   },
   methods: {
     openHanteiModal(cell) {
-      this.$refs.hanteiRef.open(cell);
-      this.$emit('toggleHanteiShow', cell.position);
+      if(this.viewType !== 'detail') {
+        this.$refs.hanteiRef.open(cell);
+        this.$emit('toggleHanteiShow', cell.position);
+      }
     },
     selectImg(val) {
       this.$emit('selectImg', val);

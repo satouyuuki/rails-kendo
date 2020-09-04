@@ -5,8 +5,8 @@ Vue.use(VueRouter);
 import HomeIndex from './components/pages/index.vue';
 import baseLayout from './components/layouts/baseLayout.vue';
 import MatchList from './components/pages/matchList.vue';
-import MatchDetail from './components/pages/matchDetail.vue';
-import MatchEdit from './components/pages/matchEdit.vue';
+// import MatchDetail from './components/pages/matchDetail.vue';
+// import MatchEdit from './components/pages/matchEdit.vue';
 import NotFound from './components/pages/404.vue';
 
 const router = new VueRouter({
@@ -20,11 +20,10 @@ const router = new VueRouter({
         {
           path: 'new/:matchId',
           component: HomeIndex,
-          name: 'newMatchList',
+          name: 'new',
         },
-        { path: 'list', component: MatchList, name: 'list' },
-        { path: 'detail/:matchId', component: MatchDetail, name: 'detail' },
-        { path: 'edit/:matchId', component: MatchEdit, name: 'edit' },
+        { path: 'detail/:matchId', component: HomeIndex, name: 'detail' },
+        { path: 'edit/:matchId', component: HomeIndex, name: 'edit' },
         { path: '*', component: NotFound },
       ]
     },

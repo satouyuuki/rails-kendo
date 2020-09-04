@@ -1,61 +1,58 @@
 <template>
   <div>
-    <div class="mask" v-if="isShow" v-on:click.self="close">
-      <div class="m-card">
-        <button type="button" class="m-card__close-btn" v-on:click="close">閉じる</button>
-        <h2>新しく試合表を作成する</h2>
-        <div class="m-card__list">
-          <div>
-            <select v-model="selectedPlace">
-              <option value="" disabled>選択してください</option>
-              <option v-for="place in places" :key="place.id" v-bind:value="place.id">
-                {{place.name}}
-              </option>
-            </select>
-            <button @click="onNewPlace">新規</button>
-          </div>
-          <div>
-            <select v-model="selectedSchool">
-              <option value="" disabled>選択してください</option>
-              <option v-for="school in schools" :key="school.id" v-bind:value="school.id">
-                {{school.name}}
-              </option>
-            </select>
-            <button @click="onNewSchool">新規</button>
-          </div>
-          <button @click="createMatch">決定</button>
-        </div>
+    <BaseModal 
+      ref="BaseModalRef"
+      title="試合表を作成する"
+    >
+      <div>
+        <select v-model="selectedPlace">
+          <option value="" disabled>選択してください</option>
+          <option v-for="place in places" :key="place.id" v-bind:value="place.id">
+            {{place.name}}
+          </option>
+        </select>
+        <button @click="onNewPlace">新規</button>
       </div>
-    </div>
-    <addPlaceModal ref="addPlaceRef" @open="open" @setData="setPlaceData"/>
-    <addSchoolModal ref="addSchoolRef" @open="open" @setData="setSchoolData" />
+      <div>
+        <select v-model="selectedSchool">
+          <option value="" disabled>選択してください</option>
+          <option v-for="school in schools" :key="school.id" v-bind:value="school.id">
+            {{school.name}}
+          </option>
+        </select>
+        <button @click="onNewSchool">新規</button>
+      </div>
+      <button @click="createMatch">決定</button>
+    </BaseModal>
+    <addPlaceModal 
+      ref="addPlaceRef" 
+      @open="open" @setData="setPlaceData"/>
+    <addSchoolModal 
+      ref="addSchoolRef" 
+      @open="open" @setData="setSchoolData" />
   </div>
 </template>
 <script>
+import BaseModal from '../parts/BaseModal';
 import addPlaceModal from '../home/addPlaceModal.vue';
 import addSchoolModal from '../home/addSchoolModal.vue';
 export default {
   components: {
+    BaseModal,
     addPlaceModal,
     addSchoolModal,
   },
   data: () => {
     return {
-      isShow: false,
       selectedPlace: "",
       selectedSchool: "",
       places: [],
       schools: [],
     }
   },
-  computed: {
-  },
   methods: {
     open() {
-      this.isShow = true;
-    },
-    close() {
-      this.isShow = false;
+      this.$refs.BaseModalRef.open();
     },
     setPlaceData(data) {
       const newPlace = {
@@ -74,11 +71,11 @@ export default {
       this.selectedSchool = data.id;
     },
     onNewSchool() {
-      this.close();
+      this.$refs.BaseModalRef.close();
       this.$refs.addSchoolRef.open();
     },
     onNewPlace() {
-      this.close();
+      this.$refs.BaseModalRef.close();
       this.$refs.addPlaceRef.open();
     },
     setPlace() {
@@ -120,7 +117,7 @@ export default {
       .then(res => res.json())
       .then(res => {
         this.$router.push({
-          name: 'newMatchList',
+          name: 'new',
           params: {
             matchId: res.id,
           },

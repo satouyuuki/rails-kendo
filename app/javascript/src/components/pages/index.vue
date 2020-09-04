@@ -10,7 +10,8 @@
       @decisionMember="decisionMember"
       :regMembers="oppMembers"
     />
-    <h1>新規試合表作成</h1>
+    <!-- タイトルを算出する -->
+    <h1>{{getTitle}}</h1>
     <div>
       会場: {{placeName}}
     </div>
@@ -18,10 +19,14 @@
       日付: {{dateFormat(detailDate)}}
     </div>
     <button type="button" class="print" onclick="window.print();">印刷</button>
-    <button type="button" class="member" @click="openMemberChangeModal(1)">メンバー編成</button>
-    <button type="button" class="member" @click="openMemberChangeModal(2)">相手チーム</button>
-    <button type="button" class="member" @click="createLog">作成</button>
-
+    <template v-if="viewType !== 'detail'">
+      <button type="button" class="member" @click="openMemberChangeModal(1)">メンバー編成</button>
+      <button type="button" class="member" @click="openMemberChangeModal(2)">相手チーム</button>
+      <button type="button" class="member" @click="createLog">作成</button>
+    </template>
+    <template v-else>
+      <router-link tag="button" :to="{name: 'edit'}">試合表の編集</router-link>
+    </template>
     <div class="match-table">
       <div class="table-head">
         <div class="table-head__cell">自分の高校</div>
@@ -31,6 +36,7 @@
       <teams :members="regMembers"/>
       <!-- 試合表 -->
       <masu 
+        :viewType="viewType"
         :cells="cells"
         @toggleHanteiShow="toggleHanteiShow"
         @selectImg="selectImg"
@@ -79,10 +85,39 @@ export default {
       placeName: "",
       detailDate: "",
       hanteiTextNum: 3,
-      modalType: ""
+      modalType: "",
+      viewType: "",
+    }
+  },
+  watch: {
+    '$route': (to, from) => {
+      let self = this
+      if(to.name === 'edit') {
+        console.log('hello');
+        // console.log(this.viewType);
+        self.viewType = to.name;
+      }
     }
   },
   computed: {
+    /** ページタイトルを算出 */
+    getTitle() {
+      let title = '';
+      switch(this.viewType) {
+        case 'new':
+          title = '新規作成';
+          break;
+        case 'detail':
+          title = '詳細';
+          break;
+        case 'edit':
+          title = '編集';
+          break;
+        default:
+          title = 'タイトル';
+      }
+      return title;
+    },
     getWinRate() {
       let allMyPoints = 0;
       let allAitePoints = 0;
@@ -159,9 +194,6 @@ export default {
       const cell = this.cells
         .filter(cell => cell.position === this.masuId)
         .map(map => {
-          console.log(map['my_kimete']);
-          console.log(typeof map[teamMap[checkTeam]]);
-          // console.log(index);
           map[teamMap[checkTeam]].push(index);
           return map;
         });
@@ -236,10 +268,28 @@ export default {
           })
         })
         .catch(err => console.log(err));
+    },
+    getLogs() {
+      fetch(`/api/logs/${this.getMatchId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        res.forEach((item, index) => {
+          this.cells[index].team_id = item.team_id;
+          this.cells[index].opponent_id = item.opponent_id;
+          this.cells[index].my_kimete = item.my_kimete.split(',');
+          this.cells[index].aite_kimete = item.aite_kimete.split(',');
+        });
+      })
     }
   },
   async created() {
+    console.log('created');
+    this.viewType = this.$route.name;
     await this.getMatches();
+    if(this.viewType !== 'new') {
+      this.getLogs();
+    }
     this.getOpponents();
     this.getTeams();
   }

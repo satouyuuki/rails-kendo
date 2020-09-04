@@ -1,34 +1,33 @@
 <template>
-  <div class="mask" v-if="isShow" v-on:click.self="close">
-    <div class="m-card">
-      <button type="button" class="m-card__close-btn" v-on:click="close">閉じる</button>
-      <h2>新しく試合表を作成する</h2>
-      <div class="m-card__list">
-        <label>学校名</label>
-        <input v-model="newSchool">
-        <button @click="backPrev">閉じる</button>
-        <button @click="onAddSchool">追加</button>
-      </div>
+  <BaseModal 
+    ref="BaseModalRef"
+    title="新しい学校を登録する"
+  >
+    <div class="m-card__list">
+      <label>学校名</label>
+      <input v-model="newSchool">
+      <button @click="backPrev">閉じる</button>
+      <button @click="onAddSchool">追加</button>
     </div>
-  </div>
+  </BaseModal>
 </template>
 <script>
+import BaseModal from '../parts/BaseModal';
 export default {
   data: () => {
     return {
-      isShow: false,
       newSchool: "",
     }
   },
+  components: {
+    BaseModal
+  },
   methods: {
     open() {
-      this.isShow = true;
-    },
-    close() {
-      this.isShow = false;
+      this.$refs.BaseModalRef.open();
     },
     backPrev() {
-      this.close();
+      this.$refs.BaseModalRef.close();
       this.$emit('open');
     },
     setData(data) {
