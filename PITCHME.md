@@ -9,9 +9,8 @@
 7/16(木)入社
 
 ---
-### 実際に作ったもの
-
-<a href="https://yojigen-app.herokuapp.com/" target="_blank">リンク</a>
+### 何を作ったのか
+試合表をオンラインで作れるツール
 
 ---
 ### 初期構想
@@ -64,11 +63,25 @@ Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtype
 
 ---
 ### 共通部品はどんどん使い回そう
+
+今回はモーダルが7画面ある
 vueではslotという機能がある
 
 ---?code=app/javascript/src/components/parts/BaseModal.vue&lang=javascript&title=slot function
 
 ---?code=app/javascript/src/components/home/addPlaceModal.vue&lang=javascript&title=how to use
+
+---
+### 実演
+<a href="http://184.72.205.41" target="_blank">リンク</a>
+
+---
+### railsむず(一括挿入はできたが一括更新はできない 誰か教えて)
+
+---
+### 何故できないのか考えてみた
+railsチュートリアルやらずにいきなり実装から入った
+基礎が全くないからエラーの時調べるのに時間がかる
 
 ---
 ### まとめ
