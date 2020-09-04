@@ -49,7 +49,8 @@ Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtype
 <img src="ltimg/20200905match.png"/>  
 
 ---
-### つまるポイント
+<img src="ltimg/20200905match_saiku.png"/>
+
 ---
 webpackとwebpackerどっちにする問題
 
