@@ -68,11 +68,11 @@ vueではslotという機能がある
 
 ---?code=app/javascript/src/components/parts/BaseModal.vue&lang=javascript&title=slot function
 
-@[10](この部分は入れ替え可能)
-
 ---?code=app/javascript/src/components/home/addPlaceModal.vue&lang=javascript&title=how to use
 
-@[6-11](この部分が代入される)
+---
+### まとめ
 
+VueのことはわかったがRails全然わからない
 ---
 最後までありがとうございました。
