@@ -25,9 +25,25 @@ Vue, Vuex, Typescript, Rails, Docker, AWS
 
 Vue, Rails, AWS
 
+めっちゃ削ぎ落とした
+
 ---
-### 進め方
+### やってみた感想
+
+Vueの基礎のみ使ったことで、Vuexのが向いてるパターンやtypescriptで型指定したい場合などが自分で考えられる
+
 ---
+### ER図(テーブル)
+<img src="ltimg/db.png"/>  
+
+---
+### 今回一番感動したポイント
+コンポーネント思考ってすげー
+
+---
+### どういうことか
+
+---kendo-app/app/javascript/src/router.js&lang=javascript&title=front routing
 
 DBの設計をする
 ↓
@@ -63,13 +79,12 @@ version6以降では標準実装
 <img src="gitpitch-img/productimg.png"/>  
 ---?code=server.js&lang=javascript&title=server.js
 
-@[15](buildしたフロントページを返す)
+@[20-22](同一のコンポーネント)
 ---?code=server.js&lang=javascript&title=server.js
 
-@[72-86](データベースに書き込み、jsonを返す)
 ---
 フォルダ構成
-<img src="gitpitch-img/folder.png"/>  
+<img src="ltimg/20200905match.png"/>  
 
 ---
 ### ER図(テーブル)
