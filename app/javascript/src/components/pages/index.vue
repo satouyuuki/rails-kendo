@@ -112,27 +112,15 @@ export default {
       return this.$route.params.matchId;
     },
     customCells() {
-      
-      const cloneCells = this.cells.map(map => {
-        // map['match_id'] = Number(this.getMatchId);
-        map.match_id = Number(this.getMatchId);
-        map.aite_kimete = map.aite_kimete.join(',');
-        map.my_kimete = map.my_kimete.join(',');
-        return map;
+      const result = [];
+      this.cells.forEach(map => {
+        const cloneMap = Object.assign({}, map);
+        cloneMap.match_id = Number(this.getMatchId);
+        cloneMap.aite_kimete = map.aite_kimete.join(',');
+        cloneMap.my_kimete = map.my_kimete.join(',');
+        result.push(cloneMap)
       });
-      return cloneCells;
-      // const result = [];
-      // this.regMembers.forEach((item, index) => {
-      //   const cloneRegMember = Object.assign({}, item);
-      //   const cloneOppMember = Object.assign({}, this.oppMembers[index]);
-      //   delete cloneRegMember.name;
-      //   delete cloneOppMember.name;
-      //   cloneRegMember['my_kimete'] = this.cells[index].my_kimete.join(',');
-      //   cloneRegMember['aite_kimete'] = this.cells[index].aite_kimete.join(',');
-      //   cloneRegMember['match_id'] = Number(this.getMatchId);
-      //   result.push(Object.assign(cloneRegMember, cloneOppMember));
-      // })
-      // return result
+      return result;
     }
   },
   methods: {
@@ -171,7 +159,11 @@ export default {
       const cell = this.cells
         .filter(cell => cell.position === this.masuId)
         .map(map => {
+          console.log(map['my_kimete']);
+          console.log(typeof map[teamMap[checkTeam]]);
+          // console.log(index);
           map[teamMap[checkTeam]].push(index);
+          return map;
         });
     },
     deletePoint(val) {
