@@ -35,7 +35,14 @@ class LogsController < ApplicationController
         position: item[:position]
       )
     end
-    Log.import logs, on_duplicate_key_update: [:my_kimete, :aite_kimete]
+    Log.import logs, on_duplicate_key_update: [
+      :match_id,
+      :team_id,
+      :opponent_id,
+      :my_kimete, 
+      :aite_kimete,
+      :position
+    ]
     render json: logs
   end
 
