@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   delete "api/matches/:id" => "matches#delete"
   post "api/matches" => "matches#create"
   get "api/opponents" => "opponents#index"
+  post "api/opponents" => "opponents#create"
   get "api/opponents/:id" => "opponents#show"
   get "api/schools" => "schools#index"
   post "api/schools" => "schools#create"

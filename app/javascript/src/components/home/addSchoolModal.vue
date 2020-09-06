@@ -1,18 +1,20 @@
 <template>
   <BaseModal 
     ref="BaseModalRef"
-    title="新しい学校を登録する"
+    title="新しい対戦校を登録する"
+    add-btn-text="追加"
+    @clicked="onAddSchool"
+    @closed="closed"
   >
     <div class="m-card__list">
       <label>学校名</label>
-      <input v-model="newSchool">
-      <button @click="backPrev">閉じる</button>
-      <button @click="onAddSchool">追加</button>
+      <input v-model="newSchool" placeholder="対戦校を入力してください">
     </div>
   </BaseModal>
 </template>
 <script>
 import BaseModal from '../parts/BaseModal';
+import {school} from '../../service';
 export default {
   data: () => {
     return {
@@ -26,8 +28,10 @@ export default {
     open() {
       this.$refs.BaseModalRef.open();
     },
-    backPrev() {
-      this.$refs.BaseModalRef.close();
+    close() {
+      this.$refs.BaseModalRef.onClose();
+    },
+    closed() {
       this.$emit('open');
     },
     setData(data) {
@@ -38,24 +42,12 @@ export default {
       const data = {
         name: this.newSchool,
       }
-      this.matchData = data;
-      fetch('api/schools', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(data)
-      })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res);
-        alert(`${res.name}会場を追加しました。`);
-        this.setData(res);
-        this.backPrev();
-      })
-      .catch(err => console.log(err));
+      school.createSchoolApi(data)
+        .then(res => {
+          alert(`${res.name}を追加しました。`);
+          this.setData(res);
+          this.close();
+        })
     }
   },
 }

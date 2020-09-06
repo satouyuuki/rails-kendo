@@ -76,7 +76,6 @@ export default {
 <style lang="scss" scoped>
 @import "../../scss/variable.scss";
 .masu-list {
-  display: flex;
   &__cells {
     display: flex;
     flex-wrap: wrap;

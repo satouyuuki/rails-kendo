@@ -10,7 +10,8 @@
         <slot />
       </div>
       <div class="m-card__bottom">
-        <button type="button" class="close-btn" @click="close">閉じる</button>
+        <button type="button" class="close-btn" @click="onClose">閉じる</button>
+        <button v-if="addBtnText" class="active-btn" @click="onClick">{{addBtnText}}</button>
       </div>
     </div>
   </div>
@@ -18,9 +19,10 @@
 <script>
 export default {
   name: "BaseModal",
-  props: [
-    "title"
-  ],
+  props: {
+    title: String,
+    addBtnText: String,
+  },
   data: () => {
     return {
       isShow: false,
@@ -33,11 +35,19 @@ export default {
     close() {
       this.isShow = false;
     },
+    onClose() {
+      this.close();
+      this.$emit('closed');
+    },
+    onClick() {
+      this.$emit('clicked');
+    }
   }
 }
 </script>
 <style scoped lang="scss">
 @import "../../scss/variable.scss";
+
 .mask {
   display: block;
   position: absolute;
@@ -69,20 +79,6 @@ export default {
       width: 40px;
       height: auto;
     }
-  }
-}
-.close-btn {
-  background: $white;
-  border: 1px solid $light-grey;
-  color: $light-grey;
-  border-radius: 20px;
-  padding: 2px 20px;
-  height: 30px;
-  box-sizing: content-box;
-  &:focus,
-  &:hover {
-    outline: none;
-    border: 2px solid $light-grey;
   }
 }
 .close-icon {
