@@ -1,7 +1,12 @@
 class MatchesController < ApplicationController
   def index
     matches = Match.all
-    render json: matches
+    render json: matches.map {|n| {
+      id: n.id,
+      school_name: n.school.name,
+      place_name: n.place.name,
+      create_date: n.created_at
+    }}
   end
   def show
     @match = Match.where(id: params[:id])

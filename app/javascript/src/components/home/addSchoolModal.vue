@@ -8,7 +8,7 @@
   >
     <div class="m-card__list">
       <label>学校名</label>
-      <input v-model="newSchool">
+      <input v-model="newSchool" placeholder="対戦校を入力してください">
     </div>
   </BaseModal>
 </template>

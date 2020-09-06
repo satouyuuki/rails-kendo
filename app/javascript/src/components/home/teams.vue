@@ -35,10 +35,11 @@ export default {
   background-color: $white;
   max-width: 130px;
   overflow-y: auto;
-  height: 350px;
+  height: 365px;
   %table-cell {
     display: inline-block;
     width: 100%;
+    white-space: nowrap;
     min-height: 70px;
     padding: 15px;
     text-align: center;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <memberCreateModal
       ref="memberCreateModalRef"
       :school-id="schoolData.schoolId"
@@ -48,6 +48,10 @@
     <div class="hantei-text" v-bind:class="{ 'win': hanteiTextNum === 1, 'lose':hanteiTextNum === 2 }">
       {{getWinRate}}
     </div>
+    <p>
+      チームポシション(先鋒・次鋒・中堅・副将・大将)はドラッグアンドドロップで変更できます。<br>
+      また、登録済み選手はマスの下にあります。(スクロール可能)
+    </p>
   </div>
 </template>
 <script>

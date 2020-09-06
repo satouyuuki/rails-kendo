@@ -8,7 +8,7 @@
   >
     <div class="m-card__list">
       <label>会場名</label>
-      <input v-model="newPlace">
+      <input v-model="newPlace" placeholder="会場名を入力してください">
     </div>
   </BaseModal>
 </template>

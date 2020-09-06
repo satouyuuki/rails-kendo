@@ -6,7 +6,7 @@
     @clicked="createMember"
   >
   <div v-for="(member, index) in members" :key="index">
-    <input type="text" v-model="member.name" />
+    <input type="text" v-model="member.name" placeholder="選手名を入力してください"/>
   </div>
   </BaseModal>
 </template>

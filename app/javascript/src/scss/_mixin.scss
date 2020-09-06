@@ -1,9 +1,12 @@
 @mixin button($bg-color, $bg-sub-color, $text-color, $size: 1px) {
+  display: inline-block;
+  text-align: center;
+
   background: $bg-color;
   border: $size solid $bg-sub-color;
   color: $text-color;
   border-radius: $size * 15;
-  padding: $size * 2 $size * 20;
+  padding: $size * 6 $size * 20;
   min-width: $size * 120;
   min-height: $size * 30;
   margin: $size * 8;
