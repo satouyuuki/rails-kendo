@@ -14,12 +14,18 @@
   }
 }
 .match-btn {
-  background-color: #00F5FF;
-  border: 4px solid #00BAFF;
+  background-color: $light-blue;
+  border: 4px solid $deep-blue;
   border-radius: 20px;
   color: #fff;
   font-size: 32px;
   text-align: center;
   width: 175px;
   min-height: 50px
+}
+.close-btn {
+  @include small-btn($white, $light-grey, $light-grey);
+}
+.active-btn {
+  @include small-btn($light-blue, $deep-blue, $white);
 }

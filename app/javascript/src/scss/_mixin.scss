@@ -1,0 +1,14 @@
+@mixin small-btn($bg-color, $bg-sub-color, $text-color) {
+  background: $bg-color;
+  border: 1px solid $bg-sub-color;
+  color: $text-color;
+  border-radius: 15px;
+  padding: 2px 20px;
+  min-width: 120px;
+  margin: 8px;
+  &:focus,
+  &:hover {
+    outline: none;
+    border: 2px solid $bg-sub-color;
+  }
+}

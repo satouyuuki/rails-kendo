@@ -3,6 +3,8 @@
     <BaseModal 
       ref="BaseModalRef"
       title="試合表を作成する"
+      add-btn-text="決定"
+      @clicked="createMatch"
     >
       <div>
         <select v-model="selectedPlace">
@@ -11,7 +13,7 @@
             {{place.name}}
           </option>
         </select>
-        <button @click="onNewPlace">新規</button>
+        <button class="active-btn" @click="onNewPlace">新規</button>
       </div>
       <div>
         <select v-model="selectedSchool">
@@ -20,9 +22,8 @@
             {{school.name}}
           </option>
         </select>
-        <button @click="onNewSchool">新規</button>
+        <button class="active-btn" @click="onNewSchool">新規</button>
       </div>
-      <button @click="createMatch">決定</button>
     </BaseModal>
     <addPlaceModal 
       ref="addPlaceRef" 
@@ -36,6 +37,7 @@
 import BaseModal from '../parts/BaseModal';
 import addPlaceModal from '../home/addPlaceModal.vue';
 import addSchoolModal from '../home/addSchoolModal.vue';
+import {match, place, school} from '../../service';
 export default {
   components: {
     BaseModal,
@@ -79,24 +81,12 @@ export default {
       this.$refs.addPlaceRef.open();
     },
     setPlace() {
-      fetch('api/places')
-        .then(res => {
-          return res.json();
-        })
-        .then(res => {
-          this.places = res;
-        })
-        .catch(err => {});
+      place.getPlaceApi()
+        .then(res => this.places = res);
     },
     setSchool() {
-      fetch('api/schools')
-        .then(res => {
-          return res.json();
-        })
-        .then(res => {
-          this.schools = res;
-        })
-        .catch(err => {});
+      school.getSchoolApi()
+        .then(res => this.schools = res);
     },
     createMatch() {
       if(!this.selectedPlace && !this.selectedSchool) return;
@@ -104,26 +94,15 @@ export default {
         place_id: this.selectedPlace,
         school_id: this.selectedSchool
       }
-      this.matchData = data;
-      fetch('api/matches', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(data)
-      })
-      .then(res => res.json())
-      .then(res => {
-        this.$router.push({
-          name: 'new',
-          params: {
-            matchId: res.id,
-          },
+      match.createMatchApi(data)
+        .then(res => {
+          this.$router.push({
+            name: 'new',
+            params: {
+              matchId: res.id,
+            },
+          })
         })
-      })
-      .catch(err => console.log(err));
     }
   },
   created() {

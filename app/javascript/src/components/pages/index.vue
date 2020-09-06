@@ -296,6 +296,12 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.match-table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
 .table-head{
   width: 100%;
   display: flex;
