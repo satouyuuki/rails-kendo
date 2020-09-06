@@ -21,11 +21,19 @@
   font-size: 32px;
   text-align: center;
   width: 175px;
-  min-height: 50px
+  min-height: 50px;
+  cursor: pointer;
+  margin-left: auto;
 }
 .close-btn {
-  @include small-btn($white, $light-grey, $light-grey);
+  @include button($white, $light-grey, $light-grey);
 }
 .active-btn {
-  @include small-btn($light-blue, $deep-blue, $white);
+  @include button($light-blue, $deep-blue, $white);
+}
+.close-btn--large {
+  @include button($white, $light-grey, $light-grey, $size: 1.5px);
+}
+.active-btn--large {
+  @include button($light-blue, $deep-blue, $white, $size: 1.5px);
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div @click="createNewMatch" class="match-btn">試合表作成</div>
+    <div @click="createNewMatch" class="active-btn--large">試合表作成</div>
     <h1>試合リスト</h1>
     <ul>
       <li v-for="list in matchLists" :key="list.id">

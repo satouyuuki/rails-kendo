@@ -1,15 +1,20 @@
 <template>
   <div>
-    <memberModal 
-      ref="memberModalRef"
-      @decisionMember="decisionMember"
-      :regMembers="regMembers"
+    <memberCreateModal
+      ref="memberCreateModalRef"
+      :school-id="schoolData.schoolId"
+      @created="getOpponents"
     />
-    <!-- <opponentModal 
-      ref="opponentModalRef"
-      @decisionMember="decisionMember"
-      :regMembers="oppMembers"
-    /> -->
+    <template v-if="viewType === 'new'">
+      <button type="button" class="active-btn--large" @click="createLog">作成完了</button>
+    </template>
+    <template v-else-if="viewType === 'edit'">
+      <router-link tag="button" :to="{name: 'detail'}" class="close-btn--large">戻る</router-link>
+      <button type="button" class="active-btn--large" @click="createLog">編集完了</button>
+    </template>
+    <template v-else-if="viewType === 'detail'">
+      <router-link tag="button" :to="{name: 'edit'}" class="active-btn--large">編集する</router-link>
+    </template>
     <!-- タイトルを算出する -->
     <h1>{{getTitle}}</h1>
     <div>
@@ -18,14 +23,9 @@
     <div>
       日付: {{dateFormat(detailDate)}}
     </div>
-    <button type="button" class="print" onclick="window.print();">印刷</button>
-    <template v-if="viewType !== 'detail'">
-      <button type="button" class="member" @click="openMemberChangeModal(1)">メンバー編成</button>
-      <button type="button" class="member" @click="openMemberChangeModal(2)">相手チーム</button>
-      <button type="button" class="member" @click="createLog">作成</button>
-    </template>
-    <template v-else>
-      <router-link tag="button" :to="{name: 'edit'}">試合表の編集</router-link>
+    <button type="button" class="close-btn" onclick="window.print();">印刷</button>
+    <template v-if="viewType === 'new' || viewType === 'edit'">
+      <button type="button" class="active-btn" @click="openMemberCreateModal()">相手チーム作成</button>
     </template>
     <div class="match-table">
       <div class="table-head">
@@ -51,15 +51,14 @@
   </div>
 </template>
 <script>
-import memberModal from '../home/memberModal.vue';
-import opponentModal from '../home/opponentModal.vue';
+import memberCreateModal from '../home/memberCreateModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
 import Mixin from '../../mixin';
 import {teamMap, hanteiText, modalType} from '../../constant';
 export default {
   components: {
-    memberModal,
+    memberCreateModal,
     masu,
     teams,
   },
@@ -84,7 +83,6 @@ export default {
       placeName: "",
       detailDate: "",
       hanteiTextNum: 3,
-      modalType: "",
       viewType: "",
     }
   },
@@ -92,8 +90,6 @@ export default {
     '$route': (to, from) => {
       let self = this
       if(to.name === 'edit') {
-        console.log('hello');
-        // console.log(this.viewType);
         self.viewType = to.name;
       }
     }
@@ -101,6 +97,11 @@ export default {
   computed: {
     setMemberPosition() {
       this.regMembers.map((map, index) => {
+        map.position = index + 1;
+      })
+    },
+    setOpponentPosition() {
+      this.oppMembers.map((map, index) => {
         map.position = index + 1;
       })
     },
@@ -163,14 +164,8 @@ export default {
     }
   },
   methods: {
-    openMemberChangeModal(id) {
-      this.modalType = modalType[id];
-      if(this.modalType === 'member') {
-        this.$refs.memberModalRef.open();
-      }
-      // else if(this.modalType === 'opponent') {
-      //   this.$refs.opponentModalRef.open();
-      // }
+    openMemberCreateModal() {
+      this.$refs.memberCreateModalRef.open();
     },
     createLog() {
       fetch('/api/logs', {
@@ -183,7 +178,13 @@ export default {
         body: JSON.stringify(this.customCells)
       })
       .then(res => res.json())
-      .then(res => console.log(res))
+      .then(res => {
+        alert('登録に成功しました。');
+          this.$router.push({
+            name: 'list'
+          })
+          .catch(err => {});
+      })
       .catch(err => console.log(err));
     },
     toggleHanteiShow(id) {
@@ -213,23 +214,6 @@ export default {
           }
         });
     },
-    decisionMember(members) {
-      // if(!members || members.length < 5) return;
-      if(this.modalType === 'member') {
-        console.log(members);
-        this.regMembers.map((map, index) => {
-          map.team_id = members[index].team_id;
-          map.name = members[index].name;
-          map.position = members[index].position;
-        })
-      }
-      if(this.modalType === 'opponent') {
-        this.oppMembers.map((map, index) => {
-          map.opponent_id = members[index].opponent_id;
-          map.name = members[index].name;
-        })
-      }
-    },
     async getMatches() {
       return fetch(`/api/matches/${this.getMatchId}`)
         .then(res => res.json())
@@ -247,14 +231,15 @@ export default {
       fetch(`/api/opponents/${this.schoolData.schoolId}`)
         .then(res => res.json())
         .then(res =>  {
+          const oppNum = this.oppMembers.length;
           res.map((map, index) => {
-            this.oppMembers.push({
-              opponent_id: map.id,
-              name: map.name,
-              position: index + 1
-            })
+            if(oppNum <= index) {
+              this.oppMembers.push({
+                opponent_id: map.id,
+                name: map.name,
+              })
+            }
           })
-          console.log(res);
         })
         .catch(err => console.log(err));
     },
@@ -275,7 +260,6 @@ export default {
       fetch(`/api/logs/${this.getMatchId}`)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         res.forEach((item, index) => {
           this.cells[index].team_id = item.team_id;
           this.cells[index].opponent_id = item.opponent_id;
