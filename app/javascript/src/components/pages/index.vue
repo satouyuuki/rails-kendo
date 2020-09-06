@@ -5,11 +5,11 @@
       @decisionMember="decisionMember"
       :regMembers="regMembers"
     />
-    <memberModal 
+    <!-- <opponentModal 
       ref="opponentModalRef"
       @decisionMember="decisionMember"
       :regMembers="oppMembers"
-    />
+    /> -->
     <!-- タイトルを算出する -->
     <h1>{{getTitle}}</h1>
     <div>
@@ -52,7 +52,7 @@
 </template>
 <script>
 import memberModal from '../home/memberModal.vue';
-import selectMemberModal from '../home/selectMemberModal.vue';
+import opponentModal from '../home/opponentModal.vue';
 import masu from '../home/masu.vue';
 import teams from '../home/teams.vue';
 import Mixin from '../../mixin';
@@ -60,7 +60,6 @@ import {teamMap, hanteiText, modalType} from '../../constant';
 export default {
   components: {
     memberModal,
-    selectMemberModal,
     masu,
     teams,
   },
@@ -100,6 +99,11 @@ export default {
     }
   },
   computed: {
+    setMemberPosition() {
+      this.regMembers.map((map, index) => {
+        map.position = index + 1;
+      })
+    },
     /** ページタイトルを算出 */
     getTitle() {
       let title = '';
@@ -164,12 +168,9 @@ export default {
       if(this.modalType === 'member') {
         this.$refs.memberModalRef.open();
       }
-      else if(this.modalType === 'opponent') {
-        this.$refs.opponentModalRef.open();
-      }
-    },
-    testModal() {
-      this.$refs.selectMemberModal.open();
+      // else if(this.modalType === 'opponent') {
+      //   this.$refs.opponentModalRef.open();
+      // }
     },
     createLog() {
       fetch('/api/logs', {
@@ -213,11 +214,13 @@ export default {
         });
     },
     decisionMember(members) {
-      if(!members || members.length < 5) return;
+      // if(!members || members.length < 5) return;
       if(this.modalType === 'member') {
+        console.log(members);
         this.regMembers.map((map, index) => {
           map.team_id = members[index].team_id;
           map.name = members[index].name;
+          map.position = members[index].position;
         })
       }
       if(this.modalType === 'opponent') {
@@ -263,7 +266,6 @@ export default {
             this.regMembers.push({
               team_id: map.id,
               name: map.name,
-              position: index + 1
             })
           })
         })

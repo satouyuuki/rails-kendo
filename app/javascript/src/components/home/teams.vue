@@ -1,34 +1,29 @@
 <template>
-  <div class="member-list">
+  <draggable class="member-list" :list="members">
     <div 
       class="member-list__cell"
-      v-for="(member, index) in selectedMembers"
+      v-for="(member, index) in members"
       :key="index"
     >
-      <template v-if="index === 0">先鋒: {{member.name}}</template> 
-      <template v-if="index === 1">次鋒: {{member.name}}</template> 
-      <template v-if="index === 2">中堅: {{member.name}}</template> 
-      <template v-if="index === 3">副将: {{member.name}}</template> 
-      <template v-if="index === 4">大将: {{member.name}}</template> 
+      <template v-if="index === 0">先: {{member.name}}</template> 
+      <template v-else-if="index === 1">次: {{member.name}}</template> 
+      <template v-else-if="index === 2">中: {{member.name}}</template> 
+      <template v-else-if="index === 3">副: {{member.name}}</template> 
+      <template v-else-if="index === 4">大: {{member.name}}</template> 
+      <template v-else>補: {{member.name}}</template> 
     </div>
-  </div>
+  </draggable>
 </template>
 <script>
+import draggable from 'vuedraggable';
 export default {
   name: "teams",
+  components: {
+    draggable,
+  },
   props: [
     "members",
   ],
-  computed: {
-    selectedMembers() {
-      const membersClone = this.members;
-      const memNum = membersClone.length;
-      if(memNum > 5) {
-        return membersClone.filter(n => n.position <= 5);
-      } 
-      return membersClone;
-    }
-  }
 }
 </script>
 <style lang="scss" scoped>
@@ -39,10 +34,12 @@ export default {
   flex-grow: 1;
   background-color: $white;
   max-width: 130px;
+  overflow-y: auto;
+  height: 350px;
   %table-cell {
     display: inline-block;
     width: 100%;
-    height: 100%;
+    min-height: 70px;
     padding: 15px;
     text-align: center;
     border: 1px solid $grey;

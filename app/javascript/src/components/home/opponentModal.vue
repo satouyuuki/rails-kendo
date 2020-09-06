@@ -2,8 +2,9 @@
   <BaseModal 
     ref="BaseModalRef"
     title="レギュラー編成"
+    add-btn-text="決定"
+    @clicked="addMember"
   >
-    <button @click="addMember">決定</button>
     <draggable class="draggable-wrap" v-model="members" group="Regular" @start="drag=true" @end="drag=false">
       <div class="draggable" v-for="member in members" :key="member.id">
         {{member.name}}
