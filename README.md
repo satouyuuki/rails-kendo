@@ -1,26 +1,37 @@
-ここに来て共存ができないと分かった
+## 剣道試合表管理ツール
 
-# README
+## 使ってる技術 Vue Rails(ver5)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### こだわりポイント
+* Vueはコンポーネント設計で作った。
 
-Things you may want to cover:
+### 今後の改良
+* エラーハンドリング
+* 環境をドッカーで作る
 
-* Ruby version
+### ローカル環境構築
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* gitをクローンする
+```
+$ git clone git@github.com:satouyuuki/rails-kendo.git
+```
+* ディレクトリ移動
+```
+$ cd rails-kendo
+```
+* gemをインストール
+```
+$ bundle install --without production
+```
+* マイグレーション
+```
+rails db:migrate RAILS_ENV=development
+```
+* ダミーデータを挿入
+```
+rails db:migrate RAILS_ENV=development
+```
+* ローカルサーバ立ち上げ
+```
+rails s
+```
