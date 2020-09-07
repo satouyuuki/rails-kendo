@@ -21,6 +21,7 @@
     </div>
     <hanteiModal 
       ref="hanteiRef"
+      :images="images"
       @selectImg="selectImg"
       @deletePoint="deletePoint"
     />
@@ -31,6 +32,8 @@ import hanteiModal from './hanteiModal.vue';
 import men from '../../assets/images/men.svg'
 import kote from '../../assets/images/kote.svg'
 import dou from '../../assets/images/dou.svg'
+import tuki from '../../assets/images/tuki.svg'
+import hansoku from '../../assets/images/hansoku.svg'
 
 export default {
   name: "masu",
@@ -47,6 +50,8 @@ export default {
         0: men,
         1: kote,
         2: dou,
+        3: tuki,
+        4: hansoku,
       },
       currentCell: {
         position: 0,
