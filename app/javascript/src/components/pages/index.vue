@@ -45,8 +45,8 @@
       <!-- 相手のチーム -->
       <teams :members="oppMembers"/>
     </div>
-    <div class="hantei-text" v-bind:class="{ 'win': hanteiTextNum === 1, 'lose':hanteiTextNum === 2 }">
-      {{getWinRate}}
+    <div class="hantei-text" v-bind:class="{ 'win': setHaniteNum === 1, 'lose':setHaniteNum === 3 }">
+      {{getWinText}}
     </div>
     <p>
       チームポシション(先鋒・次鋒・中堅・副将・大将)はドラッグアンドドロップで変更できます。<br>
@@ -72,13 +72,7 @@ export default {
     return {
       regMembers: [],
       oppMembers: [],
-      cells: [
-        { team_id: 1, opponent_id: 1, my_kimete: [], aite_kimete: [], position: 1},
-        { team_id: 2, opponent_id: 2, my_kimete: [], aite_kimete: [], position: 2},
-        { team_id: 3, opponent_id: 3, my_kimete: [], aite_kimete: [], position: 3},
-        { team_id: 4, opponent_id: 4, my_kimete: [], aite_kimete: [], position: 4},
-        { team_id: 5, opponent_id: 5, my_kimete: [], aite_kimete: [], position: 5},
-      ],
+      cells: [],
       masuId: 0,
       schoolData: {
         schoolId: 0,
@@ -86,7 +80,6 @@ export default {
       },
       placeName: "",
       detailDate: "",
-      hanteiTextNum: 3,
       viewType: "",
     }
   },
@@ -127,41 +120,73 @@ export default {
       }
       return title;
     },
-    getWinRate() {
-      let allMyPoints = 0;
-      let allAitePoints = 0;
+    // reduce使えそう
+    setAllMyPoints() {
+      const points = this.cells.map(cell => {
+        return cell.my_kimete.length
+      })
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      return points.reduce(reducer, 0)
+    },
+    setAllAitePoints() {
+      const points = this.cells.map(cell => {
+        return cell.aite_kimete.length
+      })
+      const reducer = (accumulator, currentValue) => accumulator + currentValue;
+      return points.reduce(reducer, 0)
+    },
+    setMyWinNum() {
       let myWinNum = 0;
+      const points = this.cells.map(cell => {
+        if (cell.my_kimete.length > cell.aite_kimete.length) {
+          myWinNum++;
+        }
+      })
+      return myWinNum;
+    },
+    setAiteWinNum() {
       let aiteWinNum = 0;
-      this.cells.forEach(({my_kimete, aite_kimete}) => {
-        if(my_kimete.length > 0) {
-          allMyPoints += my_kimete.length;
+      const points = this.cells.map(cell => {
+        if (cell.aite_kimete.length > cell.my_kimete.length) {
+          aiteWinNum++;
         }
-        if(aite_kimete.length > 0) {
-          allAitePoints += aite_kimete.length;
-        }
-        if (my_kimete.length !== aite_kimete.length) {
-          my_kimete.length > aite_kimete.length ? myWinNum++ : aiteWinNum++;
-        }
-      });
-      if(myWinNum > aiteWinNum) {
-        this.hanteiTextNum = 1;
+      })
+      return aiteWinNum;
+    },
+    setHaniteNum() {
+      // 勝者数が多い時
+      if(this.setAllMyPoints > this.setAllAitePoints) {
+        return 1;
       } 
-      else if (myWinNum === aiteWinNum) {
-        if(allMyPoints === allAitePoints) this.hanteiTextNum = 3;
-        allMyPoints > allAitePoints ? this.hanteiTextNum = 1 : (allMyPoints === allAitePoints ? this.hanteiTextNum = 3 : this.hanteiTextNum = 2);
+      else if (this.setAllMyPoints === this.setAllAitePoints) {
+        // 勝者数も取得数も同じ時
+        if(this.setMyWinNum > this.setAiteWinNum) {
+          return 1;
+        }
+        else if(this.setMyWinNum === this.setAiteWinNum) {
+          return 2;
+        }
+        return 3;
       }
-      return `${myWinNum}(${allMyPoints}) - ${aiteWinNum}(${allAitePoints}) = ${hanteiText[this.hanteiTextNum]}`;
+      else {
+        return 3;
+      }
+    },
+    getWinText() {
+      return `${this.setMyWinNum}(${this.setAllMyPoints}) - ${this.setAiteWinNum}(${this.setAllAitePoints}) = ${hanteiText[this.setHaniteNum]}`;
     },
     getMatchId() {
       return this.$route.params.matchId;
     },
     customCells() {
       const result = [];
-      this.cells.forEach(map => {
+      this.cells.forEach((map, index) => {
         const cloneMap = Object.assign({}, map);
         cloneMap.match_id = Number(this.getMatchId);
-        cloneMap.aite_kimete = map.aite_kimete.join(',');
-        cloneMap.my_kimete = map.my_kimete.join(',');
+        cloneMap.aite_kimete = map.aite_kimete.toString();
+        cloneMap.my_kimete = map.my_kimete.toString();
+        cloneMap.team_id = this.regMembers[index].team_id;
+        cloneMap.opponent_id = this.oppMembers[index].opponent_id;
         result.push(cloneMap)
       });
       return result;
@@ -264,19 +289,27 @@ export default {
       fetch(`/api/logs/${this.getMatchId}`)
       .then(res => res.json())
       .then(res => {
-        res.forEach((item, index) => {
-          this.cells[index].team_id = item.team_id;
-          this.cells[index].opponent_id = item.opponent_id;
-          this.cells[index].my_kimete = item.my_kimete.split(',');
-          this.cells[index].aite_kimete = item.aite_kimete.split(',');
+        this.cells.map((map, index) => {
+          map.my_kimete = res[index].my_kimete.length > 0 ? res[index].my_kimete.split(',') : [];
+          map.aite_kimete = res[index].aite_kimete.length > 0 ? res[index].aite_kimete.split(',') : []
         });
       })
+    },
+    initLogs() {
+      for(let i = 0; i < 5; i++) {
+        this.cells.push({
+          my_kimete: [],
+          aite_kimete: [],
+          position: i + 1
+        })
+      }
     }
   },
   async created() {
     console.log('created');
     this.viewType = this.$route.name;
     await this.getMatches();
+    this.initLogs();
     if(this.viewType !== 'new') {
       this.getLogs();
     }

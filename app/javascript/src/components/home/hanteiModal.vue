@@ -17,38 +17,33 @@
           <label for="opponent">相手</label>
         </div>
       </div>
-      自分: {{currentCell.team_id}}
-      相手: {{currentCell.opponent_id}}
     </div>
     <div class="point-area">
       <div class="point-area__item">
         <p>自分のポイント</p>
         <div v-for="(item, index) in currentCell.my_kimete" :key="index" class="point-icon">
-          <img :src="images[999]" alt="ゴミ箱" @click="onDeletePoint(item, 1)" class="point-icon__del">
+          <img :src="trush" alt="ゴミ箱" @click="onDeletePoint(item, 1)" class="point-icon__del">
           <img :src="images[item]" class="point-icon__img">
         </div>
       </div>
       <div class="point-area__item">
         <p>相手のポイント</p>
         <div v-for="(item, index) in currentCell.aite_kimete" :key="index" class="point-icon">
-          <img :src="images[999]" alt="ゴミ箱" @click="onDeletePoint(item, 2)" class="point-icon__del">
+          <img :src="trush" alt="ゴミ箱" @click="onDeletePoint(item, 2)" class="point-icon__del">
           <img :src="images[item]" class="point-icon__img">
         </div>
       </div>
     </div>
     <div class="m-card__list">
       <p>ポイント一覧</p>
-      <span v-for="(item, index) in items" :key="index">
-        <img :src="item.name" @click="onSelectImg(index)">
+      <span v-for="(item, index) in images" :key="index">
+        <img :src="item" @click="onSelectImg(index)">
       </span>
     </div>
   </BaseModal>
 </template>
 <script>
-import men from '../../assets/images/men.svg'
-import kote from '../../assets/images/kote.svg'
-import dou from '../../assets/images/dou.svg'
-import trush from '../../assets/images/trush.svg'
+import trush from '../../assets/images/trush.svg';
 import BaseModal from '../parts/BaseModal';
 import {teamMap} from '../../constant';
 const positionMap = {
@@ -63,24 +58,15 @@ export default {
   components: {
     BaseModal
   },
+  props: [
+    "images"
+  ],
   data: () => {
     return {
       checkTeam: 1,
-      images: {
-        0: men,
-        1: kote,
-        2: dou,
-        999: trush
-      },
-      items: [
-        {name: men},
-        {name: kote},
-        {name: dou},
-      ],
+      trush: trush,
       currentCell: {
         position: 0,
-        team_id: 0,
-        opponent_id: 0,
         my_kimete: [],
         aite_kimete: []
       }

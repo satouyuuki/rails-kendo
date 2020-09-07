@@ -25,11 +25,12 @@ class LogsController < ApplicationController
   def create
     logData = params['_json']
     logs = []    
-    logData.each do |item|
+    logData.each_with_index do |item, i|
       logs << Log.new(
+        id: i + 1,
+        match_id: item[:match_id],
         team_id: item[:team_id], 
         opponent_id: item[:opponent_id],
-        match_id: item[:match_id],
         my_kimete: item[:my_kimete],
         aite_kimete: item[:aite_kimete],
         position: item[:position]
