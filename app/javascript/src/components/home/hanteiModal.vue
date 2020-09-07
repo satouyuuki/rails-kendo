@@ -17,8 +17,6 @@
           <label for="opponent">相手</label>
         </div>
       </div>
-      自分: {{currentCell.team_id}}
-      相手: {{currentCell.opponent_id}}
     </div>
     <div class="point-area">
       <div class="point-area__item">
@@ -79,8 +77,6 @@ export default {
       ],
       currentCell: {
         position: 0,
-        team_id: 0,
-        opponent_id: 0,
         my_kimete: [],
         aite_kimete: []
       }

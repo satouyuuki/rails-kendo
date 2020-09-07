@@ -50,8 +50,6 @@ export default {
       },
       currentCell: {
         position: 0,
-        team_id: 0,
-        opponent_id: 0,
         my_kimete: [],
         aite_kimete: []
       }

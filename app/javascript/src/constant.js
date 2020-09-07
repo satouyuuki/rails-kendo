@@ -4,8 +4,8 @@ export const teamMap = {
 };
 export const hanteiText = {
   1: '勝',
-  2: '負',
-  3: '引き分け'
+  2: '引き分け',
+  3: '負'
 };
 export const modalType = {
   1: 'member',
