@@ -60,6 +60,7 @@ import masu from '../parts/masu.vue';
 import teams from '../parts/teams.vue';
 import Mixin from '../../mixin';
 import {teamMap, hanteiText, modalType} from '../../constant';
+import {log, match, team, opponent} from '../../service';
 export default {
   components: {
     memberCreateModal,
@@ -85,9 +86,8 @@ export default {
   },
   watch: {
     '$route': (to, from) => {
-      let self = this
       if(to.name === 'edit') {
-        self.viewType = to.name;
+        this.viewType = to.name;
       }
     }
   },
@@ -197,24 +197,15 @@ export default {
       this.$refs.memberCreateModalRef.open();
     },
     createLog() {
-      fetch('/api/logs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(this.customCells)
-      })
-      .then(res => res.json())
-      .then(res => {
-        alert('登録に成功しました。');
+      const data = this.customCells;
+      log.createLogApi(data)
+        .then(res => {
+          alert('登録に成功しました。');
           this.$router.push({
             name: 'list'
           })
           .catch(err => {});
-      })
-      .catch(err => console.log(err));
+        })
     },
     toggleHanteiShow(id) {
       this.masuId = id;
@@ -244,8 +235,7 @@ export default {
         });
     },
     async getMatches() {
-      return fetch(`/api/matches/${this.getMatchId}`)
-        .then(res => res.json())
+      return match.getMatchApi(this.getMatchId)
         .then(res =>  {
           this.schoolData = {
             schoolId: res.school_id,
@@ -254,12 +244,11 @@ export default {
           this.placeName = res.place_name;
           this.detailDate = res.create_date;
         })
-        .catch(err => console.log(err));
     },
-    getOpponents() {
-      fetch(`/api/opponents/${this.schoolData.schoolId}`)
-        .then(res => res.json())
+    async getOpponents() {
+      opponent.getOpponentApi(this.schoolData.schoolId)
         .then(res =>  {
+          // 相手チームの差分のみを追加
           const oppNum = this.oppMembers.length;
           res.map((map, index) => {
             if(oppNum <= index) {
@@ -270,11 +259,9 @@ export default {
             }
           })
         })
-        .catch(err => console.log(err));
     },
     getTeams() {
-      fetch('/api/teams')
-        .then(res => res.json())
+      team.getTeamApi()
         .then(res =>  {
           res.map((map, index) => {
             this.regMembers.push({
@@ -283,11 +270,9 @@ export default {
             })
           })
         })
-        .catch(err => console.log(err));
     },
     getLogs() {
-      fetch(`/api/logs/${this.getMatchId}`)
-      .then(res => res.json())
+      log.getLogApi(this.getMatchId)
       .then(res => {
         this.cells.map((map, index) => {
           map.my_kimete = res[index].my_kimete.length > 0 ? res[index].my_kimete.split(',') : [];
@@ -306,14 +291,13 @@ export default {
     }
   },
   async created() {
-    console.log('created');
     this.viewType = this.$route.name;
     await this.getMatches();
+    this.getOpponents();
     this.initLogs();
     if(this.viewType !== 'new') {
       this.getLogs();
     }
-    this.getOpponents();
     this.getTeams();
   }
 }
