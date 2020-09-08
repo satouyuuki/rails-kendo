@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-import newMatchModal from '../home/newMatchModal';
+import newMatchModal from '../parts/newMatchModal';
 import Mixin from '../../mixin';
 
 export default {

@@ -34,9 +34,9 @@
   </div>
 </template>
 <script>
-import BaseModal from '../parts/BaseModal';
-import addPlaceModal from '../home/addPlaceModal.vue';
-import addSchoolModal from '../home/addSchoolModal.vue';
+import BaseModal from '../base/BaseModal';
+import addPlaceModal from '../parts/addPlaceModal.vue';
+import addSchoolModal from '../parts/addSchoolModal.vue';
 import {match, place, school} from '../../service';
 export default {
   components: {

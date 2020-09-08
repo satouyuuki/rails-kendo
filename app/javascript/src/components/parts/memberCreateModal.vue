@@ -11,7 +11,7 @@
   </BaseModal>
 </template>
 <script>
-import BaseModal from '../parts/BaseModal';
+import BaseModal from '../base/BaseModal';
 import {opponent} from '../../service';
 export default {
   data: () => {

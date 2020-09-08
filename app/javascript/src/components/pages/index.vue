@@ -55,9 +55,9 @@
   </div>
 </template>
 <script>
-import memberCreateModal from '../home/memberCreateModal.vue';
-import masu from '../home/masu.vue';
-import teams from '../home/teams.vue';
+import memberCreateModal from '../parts/memberCreateModal.vue';
+import masu from '../parts/masu.vue';
+import teams from '../parts/teams.vue';
 import Mixin from '../../mixin';
 import {teamMap, hanteiText, modalType} from '../../constant';
 export default {
