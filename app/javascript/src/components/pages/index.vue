@@ -270,7 +270,6 @@ export default {
               return item.id === item2.team_id
             })
           })
-          console.log(diffMember);
           diffMember.forEach((item) => {
             this.regMembers.push({
               team_id: item.id,
