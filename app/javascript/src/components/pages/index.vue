@@ -55,11 +55,12 @@
   </div>
 </template>
 <script>
-import memberCreateModal from '../home/memberCreateModal.vue';
-import masu from '../home/masu.vue';
-import teams from '../home/teams.vue';
+import memberCreateModal from '../parts/memberCreateModal.vue';
+import masu from '../parts/masu.vue';
+import teams from '../parts/teams.vue';
 import Mixin from '../../mixin';
 import {teamMap, hanteiText, modalType} from '../../constant';
+import {log, match, team, opponent} from '../../service';
 export default {
   components: {
     memberCreateModal,
@@ -85,9 +86,8 @@ export default {
   },
   watch: {
     '$route': (to, from) => {
-      let self = this
       if(to.name === 'edit') {
-        self.viewType = to.name;
+        this.viewType = to.name;
       }
     }
   },
@@ -197,24 +197,15 @@ export default {
       this.$refs.memberCreateModalRef.open();
     },
     createLog() {
-      fetch('/api/logs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(this.customCells)
-      })
-      .then(res => res.json())
-      .then(res => {
-        alert('登録に成功しました。');
+      const data = this.customCells;
+      log.createLogApi(data)
+        .then(res => {
+          alert('登録に成功しました。');
           this.$router.push({
             name: 'list'
           })
           .catch(err => {});
-      })
-      .catch(err => console.log(err));
+        })
     },
     toggleHanteiShow(id) {
       this.masuId = id;
@@ -244,8 +235,7 @@ export default {
         });
     },
     async getMatches() {
-      return fetch(`/api/matches/${this.getMatchId}`)
-        .then(res => res.json())
+      return match.getMatchApi(this.getMatchId)
         .then(res =>  {
           this.schoolData = {
             schoolId: res.school_id,
@@ -254,45 +244,60 @@ export default {
           this.placeName = res.place_name;
           this.detailDate = res.create_date;
         })
-        .catch(err => console.log(err));
     },
-    getOpponents() {
-      fetch(`/api/opponents/${this.schoolData.schoolId}`)
-        .then(res => res.json())
+    async getOpponents() {
+      return opponent.getOpponentApi(this.schoolData.schoolId)
         .then(res =>  {
-          const oppNum = this.oppMembers.length;
-          res.map((map, index) => {
-            if(oppNum <= index) {
-              this.oppMembers.push({
-                opponent_id: map.id,
-                name: map.name,
-              })
-            }
+          // 相手チームの差分のみを追加
+          const diffMember = res.filter(item => {
+            return !this.oppMembers.some(item2 => {
+              return item.id === item2.opponent_id
+            })
           })
-        })
-        .catch(err => console.log(err));
-    },
-    getTeams() {
-      fetch('/api/teams')
-        .then(res => res.json())
-        .then(res =>  {
-          res.map((map, index) => {
-            this.regMembers.push({
-              team_id: map.id,
-              name: map.name,
+          diffMember.forEach((item) => {
+            this.oppMembers.push({
+              opponent_id: item.id,
+              name: item.name,
             })
           })
         })
-        .catch(err => console.log(err));
     },
-    getLogs() {
-      fetch(`/api/logs/${this.getMatchId}`)
-      .then(res => res.json())
+    getTeams() {
+      team.getTeamApi()
+        .then(res =>  {
+          const diffMember = res.filter(item => {
+            return !this.regMembers.some(item2 => {
+              return item.id === item2.team_id
+            })
+          })
+          diffMember.forEach((item) => {
+            this.regMembers.push({
+              team_id: item.id,
+              name: item.name,
+            })
+          })
+        })
+    },
+    async getLogs() {
+      return log.getLogApi(this.getMatchId)
       .then(res => {
-        this.cells.map((map, index) => {
-          map.my_kimete = res[index].my_kimete.length > 0 ? res[index].my_kimete.split(',') : [];
-          map.aite_kimete = res[index].aite_kimete.length > 0 ? res[index].aite_kimete.split(',') : []
-        });
+        res.forEach((item, index) => {
+          this.cells.push({
+            my_kimete: item.my_kimete.length > 0 ? item.my_kimete.split(',') : [],
+            aite_kimete: item.aite_kimete.length > 0 ? item.aite_kimete.split(',') : [],
+            position: item.position
+          })
+          this.regMembers.push({
+            team_id: item.team_id,
+            name: item.t_name,
+            position: item.position
+          })
+          this.oppMembers.push({
+            opponent_id: item.opponent_id,
+            name: item.o_name,
+            position: item.position
+          })
+        })
       })
     },
     initLogs() {
@@ -306,12 +311,13 @@ export default {
     }
   },
   async created() {
-    console.log('created');
     this.viewType = this.$route.name;
     await this.getMatches();
-    this.initLogs();
     if(this.viewType !== 'new') {
-      this.getLogs();
+      await this.getLogs();
+    }
+    if(this.viewType === 'new') {
+      this.initLogs();
     }
     this.getOpponents();
     this.getTeams();

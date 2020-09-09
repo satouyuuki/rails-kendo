@@ -44,7 +44,7 @@
 </template>
 <script>
 import trush from '../../assets/images/trush.svg';
-import BaseModal from '../parts/BaseModal';
+import BaseModal from '../base/BaseModal';
 import {teamMap} from '../../constant';
 const positionMap = {
   1: '先鋒',

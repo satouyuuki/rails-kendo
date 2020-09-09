@@ -46,6 +46,24 @@ export const match = {
     })
       .then(res => res.json())
       .catch(err => console.log('error is ' + err));
+  },
+  deleteMatchApi: (match_id) => {
+    return fetch(`/api/matches/${match_id}`, {
+      method: 'DELETE',
+      headers: myHeaders,
+    })
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  },
+  getAllMatchApi: () => {
+    return fetch('/api/matches')
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  },
+  getMatchApi: (match_id) => {
+    return fetch(`/api/matches/${match_id}`)
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
   }
 }
 export const opponent = {
@@ -55,6 +73,45 @@ export const opponent = {
       headers: myHeaders,
       body: JSON.stringify(data)
     })
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  },
+  getOpponentApi: (school_id) => {
+    return fetch(`/api/opponents/${school_id}`)
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  }
+}
+
+export const team = {
+  createTeamApi: (data) => {
+    return fetch('/api/teams', {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  },
+  getTeamApi: () => {
+    return fetch('/api/teams')
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  }
+}
+
+export const log = {
+  createLogApi: (data) => {
+    return fetch('/api/logs', {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .catch(err => console.log('error is ' + err));
+  },
+  getLogApi: (match_id) => {
+    return fetch(`/api/logs/${match_id}`)
       .then(res => res.json())
       .catch(err => console.log('error is ' + err));
   }

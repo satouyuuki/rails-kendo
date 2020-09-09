@@ -22,6 +22,8 @@ class OpponentsController < ApplicationController
 
   private
   def set_opponent
-    @opponent = Opponent.all.select(:id, :name).where(school_id: params[:id])
+    p 'hogehoge'
+    p params
+    @opponent = Opponent.select(:id, :name).where(school_id: params[:id])
   end
 end

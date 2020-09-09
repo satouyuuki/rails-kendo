@@ -16,9 +16,9 @@
   </div>
 </template>
 <script>
-import newMatchModal from '../home/newMatchModal';
+import newMatchModal from '../parts/newMatchModal';
 import Mixin from '../../mixin';
-
+import {match} from '../../service';
 export default {
   name: "matchList",
   mixins: [Mixin],
@@ -34,33 +34,22 @@ export default {
     createNewMatch() {
       this.$refs.newMatchModal.open();
     },
-    setMatchList() {
-      fetch('/api/matches')
-      .then(res => res.json())
+    getMatchList() {
+      match.getAllMatchApi()
       .then(res => {
-        console.log(res);
         this.matchLists = res;
       })
     },
     deleteList(id) {
       if(!confirm('本当に削除しますか？')) return;
-      fetch(`/api/matches/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN' : document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-      })
-      .then(res => res.json())
+      match.deleteMatchApi(id)
       .then(res => {
-        this.setMatchList();
+        this.getMatchList();
       })
-      .catch(err => console.log(err));
     }
   },
   created() {
-    this.setMatchList();
+    this.getMatchList();
   }
 }
 </script>

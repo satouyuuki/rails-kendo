@@ -1,24 +1,24 @@
 <template>
   <BaseModal 
     ref="BaseModalRef"
-    title="新しい試合会場を登録する"
+    title="新しい対戦校を登録する"
     add-btn-text="追加"
-    @clicked="onAddPlace"
+    @clicked="onAddSchool"
     @closed="closed"
   >
     <div class="m-card__list">
-      <label>会場名</label>
-      <input v-model="newPlace" placeholder="会場名を入力してください">
+      <label>学校名</label>
+      <input v-model="newSchool" placeholder="対戦校を入力してください">
     </div>
   </BaseModal>
 </template>
 <script>
-import BaseModal from '../parts/BaseModal';
-import {place} from '../../service';
+import BaseModal from '../base/BaseModal';
+import {school} from '../../service';
 export default {
   data: () => {
     return {
-      newPlace: "",
+      newSchool: "",
     }
   },
   components: {
@@ -37,17 +37,17 @@ export default {
     setData(data) {
       this.$emit('setData', data)
     },
-    onAddPlace() {
-      if(!this.newPlace) return;
+    onAddSchool() {
+      if(!this.newSchool) return;
       const data = {
-        name: this.newPlace,
+        name: this.newSchool,
       }
-      place.createPlaceApi(data)
-      .then(res => {
-        alert(`${res.name}会場を追加しました。`);
-        this.setData(res);
-        this.close();
-      })
+      school.createSchoolApi(data)
+        .then(res => {
+          alert(`${res.name}を追加しました。`);
+          this.setData(res);
+          this.close();
+        })
     }
   },
 }

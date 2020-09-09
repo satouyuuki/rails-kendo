@@ -14,6 +14,6 @@ Rails.application.routes.draw do
   get "api/schools" => "schools#index"
   post "api/schools" => "schools#create"
   get "api/teams" => "teams#index"
-  root to: "home#index"
-  match "*path", to: "home#index", format: false, via: :get
+  root to: "application#index"
+  match "*path", to: "application#index", format: false, via: :get
 end

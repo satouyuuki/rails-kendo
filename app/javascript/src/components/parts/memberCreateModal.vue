@@ -4,6 +4,7 @@
     title="メンバーを作成"
     add-btn-text="作成"
     @clicked="createMember"
+    @closed="closedModal"
   >
   <div v-for="(member, index) in members" :key="index">
     <input type="text" v-model="member.name" placeholder="選手名を入力してください"/>
@@ -11,7 +12,7 @@
   </BaseModal>
 </template>
 <script>
-import BaseModal from '../parts/BaseModal';
+import BaseModal from '../base/BaseModal';
 import {opponent} from '../../service';
 export default {
   data: () => {
@@ -48,12 +49,14 @@ export default {
     close() {
       this.$refs.BaseModalRef.onClose();
     },
+    closedModal() {
+      this.members = [];
+    },
     createMember() {
       if(this.getExistMember.length === 0) return;
       const data = this.getExistMember;
       opponent.createOpponentApi(data)
       .then(res => {
-        console.log(res.id);
         this.$emit('created')
         this.close();
       })
