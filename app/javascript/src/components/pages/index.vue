@@ -246,38 +246,59 @@ export default {
         })
     },
     async getOpponents() {
-      opponent.getOpponentApi(this.schoolData.schoolId)
+      return opponent.getOpponentApi(this.schoolData.schoolId)
         .then(res =>  {
           // 相手チームの差分のみを追加
-          const oppNum = this.oppMembers.length;
-          res.map((map, index) => {
-            if(oppNum <= index) {
-              this.oppMembers.push({
-                opponent_id: map.id,
-                name: map.name,
-              })
-            }
+          const diffMember = res.filter(item => {
+            return !this.oppMembers.some(item2 => {
+              return item.id === item2.opponent_id
+            })
+          })
+          diffMember.forEach((item) => {
+            this.oppMembers.push({
+              opponent_id: item.id,
+              name: item.name,
+            })
           })
         })
     },
     getTeams() {
       team.getTeamApi()
         .then(res =>  {
-          res.map((map, index) => {
+          const diffMember = res.filter(item => {
+            return !this.regMembers.some(item2 => {
+              return item.id === item2.team_id
+            })
+          })
+          console.log(diffMember);
+          diffMember.forEach((item) => {
             this.regMembers.push({
-              team_id: map.id,
-              name: map.name,
+              team_id: item.id,
+              name: item.name,
             })
           })
         })
     },
-    getLogs() {
-      log.getLogApi(this.getMatchId)
+    async getLogs() {
+      return log.getLogApi(this.getMatchId)
       .then(res => {
-        this.cells.map((map, index) => {
-          map.my_kimete = res[index].my_kimete.length > 0 ? res[index].my_kimete.split(',') : [];
-          map.aite_kimete = res[index].aite_kimete.length > 0 ? res[index].aite_kimete.split(',') : []
-        });
+        res.forEach((item, index) => {
+          this.cells.push({
+            my_kimete: item.my_kimete.length > 0 ? item.my_kimete.split(',') : [],
+            aite_kimete: item.aite_kimete.length > 0 ? item.aite_kimete.split(',') : [],
+            position: item.position
+          })
+          this.regMembers.push({
+            team_id: item.team_id,
+            name: item.t_name,
+            position: item.position
+          })
+          this.oppMembers.push({
+            opponent_id: item.opponent_id,
+            name: item.o_name,
+            position: item.position
+          })
+        })
       })
     },
     initLogs() {
@@ -293,11 +314,13 @@ export default {
   async created() {
     this.viewType = this.$route.name;
     await this.getMatches();
-    this.getOpponents();
-    this.initLogs();
     if(this.viewType !== 'new') {
-      this.getLogs();
+      await this.getLogs();
     }
+    if(this.viewType === 'new') {
+      this.initLogs();
+    }
+    this.getOpponents();
     this.getTeams();
   }
 }
